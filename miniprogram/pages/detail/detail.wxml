@@ -1,0 +1,123 @@
+<view class="page-container">
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-wrap">
+    <t-loading theme="circular" size="48rpx" text="加载浪况中..." />
+  </view>
+
+  <!-- 加载失败 -->
+  <view wx:elif="{{errorMsg}}" class="loading-wrap">
+    <view style="text-align:center;padding:40rpx;">
+      <text style="color:#E24B4A;">{{errorMsg}}</text>
+      <view style="margin-top:20rpx;">
+        <t-button theme="primary" size="small" bindtap="onRetryLoad">重试</t-button>
+      </view>
+    </view>
+  </view>
+
+  <block wx:else>
+    <!-- 浪点基本信息 -->
+    <view class="section">
+      <view class="spot-title">{{spot.name}}</view>
+      <view class="spot-meta text-sm text-secondary">{{spot.region}} · {{spot.description}}</view>
+    </view>
+
+    <!-- 今日推荐评分（有规则时）/ 浪况概览（无规则时） -->
+    <view class="section" wx:if="{{recSummary}}">
+      <view class="flex-between mb-16">
+        <text class="section-title">今日推荐</text>
+        <view class="tier-badge tier-{{recSummary.tierClass}}">{{recSummary.tier}}</view>
+      </view>
+
+      <view class="rec-score-hero">
+        <text class="rec-big-score">{{recSummary.bestScore}}</text>
+        <text class="text-xs text-secondary">分</text>
+      </view>
+
+      <view class="rec-dims">
+        <view class="rec-dim">
+          <text class="rec-dim-label">浪向</text>
+          <text class="rec-dim-val">{{recSummary.waveDir}}</text>
+        </view>
+        <view class="rec-dim">
+          <text class="rec-dim-label">浪高</text>
+          <text class="rec-dim-val">{{recSummary.avgWaveH}}m</text>
+        </view>
+        <view class="rec-dim">
+          <text class="rec-dim-label">周期</text>
+          <text class="rec-dim-val">{{recSummary.avgSwell}}s</text>
+        </view>
+        <view class="rec-dim">
+          <text class="rec-dim-label">潮高</text>
+          <text class="rec-dim-val">{{recSummary.avgSeaLevel}}m</text>
+        </view>
+      </view>
+
+      <view class="rec-best-hour text-sm text-secondary" wx:if="{{recSummary.timeRange}}">
+        推荐时段：{{recSummary.timeRange}}
+      </view>
+    </view>
+
+    <!-- 今日预报 -->
+    <view class="section" wx:if="{{hourlyList.length > 0}}">
+      <text class="section-title mb-16">今日预报</text>
+      <view class="h-table">
+        <view class="h-thead">
+          <text class="h-th h-th-time">时间</text>
+          <text class="h-th h-th-wave">浪高</text>
+          <text class="h-th h-th-per">周期</text>
+          <text class="h-th h-th-dir">浪向</text>
+          <text class="h-th h-th-temp">水温</text>
+          <text class="h-th h-th-tide">潮高</text>
+          <text class="h-th h-th-pts">评分</text>
+        </view>
+        <scroll-view scroll-y class="hourly-list">
+          <view class="h-tr" wx:for="{{hourlyList}}" wx:key="time">
+            <text class="h-td h-td-time">{{item.time_label}}</text>
+            <text class="h-td h-td-wave">{{item.wave_height_m || '--'}}m</text>
+            <text class="h-td h-td-per">{{item.swell_period_s || '--'}}s</text>
+            <text class="h-td h-td-dir">{{item.wave_direction_cn || '--'}}</text>
+            <text class="h-td h-td-temp">{{item.sea_temp_c || '--'}}°</text>
+            <text class="h-td h-td-tide">{{item.sea_level_m ? item.sea_level_m + 'm' : '--'}}</text>
+            <text wx:if="{{item.recScore != null}}" class="h-td h-td-pts rec-score-{{item.recTier}}">{{item.recScore}}</text>
+            <text wx:else class="h-td h-td-pts text-secondary">--</text>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+
+    <!-- 未来7天预报 -->
+    <view class="section" wx:if="{{futureDays.length > 0}}">
+      <text class="section-title mb-16">未来7天预报</text>
+      <block wx:for="{{futureDays}}" wx:key="date">
+        <view class="future-day-header">
+          <text class="text-md">{{item.date}}</text>
+        </view>
+        <view class="h-table mb-24">
+          <view class="h-thead">
+            <text class="h-th h-th-time">时间</text>
+            <text class="h-th h-th-wave">浪高</text>
+            <text class="h-th h-th-per">周期</text>
+            <text class="h-th h-th-dir">浪向</text>
+            <text class="h-th h-th-temp">水温</text>
+            <text class="h-th h-th-tide">潮高</text>
+            <text class="h-th h-th-pts">评分</text>
+          </view>
+          <view class="hourly-list">
+            <view class="h-tr" wx:for="{{item.hours}}" wx:key="time">
+              <text class="h-td h-td-time">{{item.time_label}}</text>
+              <text class="h-td h-td-wave">{{item.wave_height_m || '--'}}m</text>
+              <text class="h-td h-td-per">{{item.swell_period_s || '--'}}s</text>
+              <text class="h-td h-td-dir">{{item.wave_direction_cn || '--'}}</text>
+              <text class="h-td h-td-temp">{{item.sea_temp_c || '--'}}°</text>
+              <text class="h-td h-td-tide">{{item.sea_level_m ? item.sea_level_m + 'm' : '--'}}</text>
+              <text wx:if="{{item.recScore != null}}" class="h-td h-td-pts rec-score-{{item.recTier}}">{{item.recScore}}</text>
+              <text wx:else class="h-td h-td-pts text-secondary">--</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </block>
+
+  <view style="height: 40rpx;"></view>
+</view>

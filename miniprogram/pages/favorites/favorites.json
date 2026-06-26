@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "我的关注",
+  "usingComponents": {
+    "spot-card": "../../components/spot-card/spot-card",
+    "t-pull-down-refresh": "tdesign-miniprogram/pull-down-refresh/pull-down-refresh",
+    "t-empty": "tdesign-miniprogram/empty/empty",
+    "t-skeleton": "tdesign-miniprogram/skeleton/skeleton",
+    "t-toast": "tdesign-miniprogram/toast/toast"
+  }
+}

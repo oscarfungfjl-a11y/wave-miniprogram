@@ -1,0 +1,27 @@
+{
+  "pages": [
+    "pages/huizhou/huizhou",
+    "pages/spots/spots",
+    "pages/detail/detail",
+    "pages/rules/rules"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#0F6E56",
+    "navigationBarTitleText": "浪报",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F5F6F8"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#888780",
+    "selectedColor": "#0F6E56",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/huizhou/huizhou", "text": "双月湾" },
+      { "pagePath": "pages/spots/spots", "text": "浪点" }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

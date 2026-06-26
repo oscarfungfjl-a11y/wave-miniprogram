@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "浪点",
+  "usingComponents": {
+    "spot-card": "../../components/spot-card/spot-card",
+    "t-search": "tdesign-miniprogram/search/search",
+    "t-empty": "tdesign-miniprogram/empty/empty",
+    "t-pull-down-refresh": "tdesign-miniprogram/pull-down-refresh/pull-down-refresh"
+  }
+}

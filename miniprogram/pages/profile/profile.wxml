@@ -1,0 +1,101 @@
+<view class="page-container">
+  <!-- 用户信息卡片 -->
+  <view class="profile-card">
+    <view class="avatar-wrap">
+      <button
+        class="avatar-btn"
+        open-type="chooseAvatar"
+        bindchooseavatar="onChooseAvatar"
+      >
+        <image
+          class="avatar-img"
+          src="{{userInfo.avatarUrl || '/assets/default-avatar.png'}}"
+          mode="aspectFill"
+        />
+      </button>
+      <view class="avatar-badge" wx:if="{{!userInfo.nickName}}">
+        <text class="text-sm">点击设置</text>
+      </view>
+    </view>
+    <view class="profile-info">
+      <input
+        wx:if="{{editing}}"
+        class="nickname-input"
+        type="nickname"
+        placeholder="请输入昵称"
+        value="{{userInfo.nickName}}"
+        bindblur="onNicknameBlur"
+      />
+      <view wx:else class="nickname">
+        {{userInfo.nickName || '冲浪爱好者'}}
+      </view>
+      <view class="text-sm text-secondary mt-12">
+        已关注 {{favoriteCount}} 个浪点
+      </view>
+    </view>
+    <view class="edit-btn" bindtap="onToggleEdit" wx:if="{{!editing}}">
+      <t-icon name="edit" size="32rpx" color="#888780" />
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-section">
+    <t-cell-group>
+      <t-cell
+        title="我关注的浪点"
+        arrow
+        hover
+        note="{{favoriteCount}}个"
+        leftIcon="star"
+        bindtap="goToFavorites"
+      />
+      <t-cell
+        title="冲浪天气提醒"
+        arrow
+        hover
+        leftIcon="notification"
+        note="{{subscribed ? '已开启' : '未开启'}}"
+        bindtap="onSubscribe"
+      />
+    </t-cell-group>
+  </view>
+
+  <view class="menu-section">
+    <t-cell-group>
+      <t-cell
+        title="关于浪报"
+        arrow
+        hover
+        leftIcon="info-circle"
+        bindtap="goToAbout"
+      />
+      <t-cell
+        title="数据来源"
+        arrow
+        hover
+        leftIcon="data"
+        note="Open-Meteo"
+        bindtap="goToDataSource"
+      />
+      <t-cell
+        title="意见反馈"
+        arrow
+        hover
+        leftIcon="chat"
+        bindtap="goToFeedback"
+      />
+    </t-cell-group>
+  </view>
+
+  <!-- 退出登录 -->
+  <view class="logout-section">
+    <t-button
+      theme="light"
+      size="large"
+      block
+      bindtap="onLogout"
+    >退出登录</t-button>
+  </view>
+
+  <view class="tab-bar-safe"></view>
+</view>

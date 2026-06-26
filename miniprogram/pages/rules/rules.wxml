@@ -1,0 +1,88 @@
+<view class="page-container">
+  <!-- 打分体系概述 -->
+  <view class="section">
+    <text class="section-title">打分体系</text>
+    <view class="card">
+      <view class="formula-box">
+        <text class="formula-text">总分 = 浪向适配30分 + 浪高匹配30分 + 涌浪周期25分 + 潮汐适配15分</text>
+      </view>
+      <view class="tier-row">
+        <view class="tier-item tier-high">高推荐</view>
+        <text class="tier-desc">80 – 100分</text>
+      </view>
+      <view class="tier-row">
+        <view class="tier-item tier-mid">中推荐</view>
+        <text class="tier-desc">60 – 79分</text>
+      </view>
+      <view class="tier-row">
+        <view class="tier-item tier-low">低推荐</view>
+        <text class="tier-desc">0 – 59分</text>
+      </view>
+      <view class="note-box mt-16">
+        <text class="text-xs text-secondary">所有维度均采用三点线性插值算法，确保分数平滑过渡。</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 维度详解 -->
+  <view class="section">
+    <text class="section-title">四维详解</text>
+    <view class="card">
+      <view class="dim-item">
+        <text class="dim-label">浪向适配（30分）</text>
+        <text class="text-sm">浪向按方向组分类：北/东北/东/东南/南/西南/西/西北。各浪点根据朝向，不同方向组对应不同分数档。</text>
+      </view>
+      <view class="dim-item">
+        <text class="dim-label">浪高匹配（30分）</text>
+        <text class="text-sm">浪点有各自的适宜浪高区间。区间内满分，偏离后插值递减。</text>
+      </view>
+      <view class="dim-item">
+        <text class="dim-label">涌浪周期（25分）</text>
+        <text class="text-sm">周期越长，浪的能量越强越整齐。各浪点设优质/可接受/差三段阈值。</text>
+      </view>
+      <view class="dim-item">
+        <text class="dim-label">潮汐适配（15分）</text>
+        <text class="text-sm">基于 Open-Meteo 海平面高度数据（sea_level_height_msl），将每小时海平面与当日均值比较。高于均值视为涨潮/高潮段→高分，低于均值→低分。无数据时默认8分。</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 各浪点详情 -->
+  <view class="section">
+    <text class="section-title">各浪点评分参数</text>
+    <view wx:for="{{spots}}" wx:key="name" class="spot-rule-card">
+      <view class="spot-rule-header">
+        <text class="spot-rule-name">{{item.name}}</text>
+        <text class="spot-rule-area text-sm">（{{item.area}}）</text>
+      </view>
+      <view class="spot-rule-body">
+        <view class="info-row">
+          <text class="info-label">适合人群</text>
+          <text class="info-val">{{item.level}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">海底地形</text>
+          <text class="info-val">{{item.bottom}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">浪向规则</text>
+          <text class="info-val text-sm">{{item.dirRules}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">浪高阈值</text>
+          <text class="info-val text-sm">{{item.waveRanges}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">周期阈值</text>
+          <text class="info-val text-sm">{{item.swellRanges}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">潮汐偏好</text>
+          <text class="info-val text-sm">{{item.tideNote}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tab-bar-safe"></view>
+</view>

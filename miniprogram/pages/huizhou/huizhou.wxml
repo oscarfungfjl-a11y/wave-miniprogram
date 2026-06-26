@@ -1,0 +1,90 @@
+<view class="page-container">
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-wrap">
+    <t-loading theme="circular" size="48rpx" text="分析浪况中..." />
+  </view>
+
+  <!-- 加载失败 -->
+  <view wx:elif="{{errorMsg}}" class="loading-wrap">
+    <view style="text-align:center;padding:40rpx;">
+      <text style="color:#E24B4A;">{{errorMsg}}</text>
+      <view style="margin-top:20rpx;">
+        <t-button theme="primary" size="small" bindtap="onRetryLoad">重试</t-button>
+      </view>
+    </view>
+  </view>
+
+  <block wx:else>
+    <!-- 综合建议 -->
+    <view class="section" wx:if="{{advice}}">
+      <text class="section-title mb-12">综合建议</text>
+      <view class="advice-box">
+        <text class="text-sm">{{advice}}</text>
+      </view>
+    </view>
+
+    <!-- 推荐浪点 -->
+    <view class="section">
+      <view class="flex-between mb-16">
+        <view class="flex-row">
+          <text class="section-title">推荐浪点</text>
+          <view class="rule-btn" bindtap="onShowRules">
+            <text class="rule-btn-text">?</text>
+          </view>
+        </view>
+        <text class="text-sm text-secondary">更新于 {{lastUpdate}}</text>
+      </view>
+
+      <!-- 推荐浪点卡片 -->
+      <view wx:if="{{topSpots.length > 0}}">
+        <view class="top-card" wx:for="{{topSpots}}" wx:key="spotId" bindtap="onTopSpotTap" data-spot-id="{{item.spotId}}">
+          <view class="top-card-header">
+            <text class="top-spot-name">{{item.name}}</text>
+            <text class="top-spot-area text-sm ml-12">（{{item.area}}）</text>
+            <view class="tier-badge tier-{{item.overallTier}} text-sm">
+              {{item.overallTier === 'high' ? '高推荐' : (item.overallTier === 'mid' ? '中推荐' : '低推荐')}}
+            </view>
+          </view>
+          <view class="top-card-body">
+            <view class="top-score-row">
+              <text class="top-big-score">{{item.bestScore}}</text>
+              <text class="text-xs text-secondary">分</text>
+            </view>
+            <view class="top-dims" wx:if="{{item.dimScores}}">
+              <view class="top-dim-item">
+                <text class="top-dim-label">浪向</text>
+                <text class="top-dim-val">{{item.dimScores.dirScore}}/30</text>
+              </view>
+              <view class="top-dim-item">
+                <text class="top-dim-label">浪高</text>
+                <text class="top-dim-val">{{item.dimScores.waveScore}}/30</text>
+              </view>
+              <view class="top-dim-item">
+                <text class="top-dim-label">周期</text>
+                <text class="top-dim-val">{{item.dimScores.swellScore}}/25</text>
+              </view>
+              <view class="top-dim-item">
+                <text class="top-dim-label">潮汐</text>
+                <text class="top-dim-val">{{item.dimScores.tideScore}}/15</text>
+              </view>
+            </view>
+            <view class="top-row">
+              <text class="top-label">平均浪高</text><text class="top-val">{{item.avgWaveH}}m</text>
+              <text class="top-label">平均周期</text><text class="top-val">{{item.avgSwell}}s</text>
+              <text class="top-label">潮高</text><text class="top-val">{{item.avgSeaLevel}}m</text>
+            </view>
+            <view class="top-time">
+              <text class="text-xs text-secondary">最佳时段：{{item.timeRange}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view wx:else>
+        <t-empty icon="info-circle" description="暂未匹配到合适的推荐" />
+      </view>
+    </view>
+  </block>
+
+  <view class="tab-bar-safe"></view>
+</view>

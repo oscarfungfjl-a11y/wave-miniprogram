@@ -1,0 +1,22 @@
+<view class="page-container">
+  <!-- 顶部问候 -->
+  <view class="header-banner">
+    <view class="header-content">
+      <view class="greeting">{{greeting}}</view>
+      <view class="date-text">{{todayDate}} · {{weekday}}</view>
+    </view>
+    <view class="header-wave-decoration"></view>
+  </view>
+
+  <!-- 浪点列表 -->
+  <view class="section">
+    <text class="section-title">全部浪点</text>
+    <text class="section-subtitle text-sm text-secondary">点击查看详细浪况</text>
+  </view>
+
+  <view class="recommend-list" wx:for="{{spots}}" wx:key="id">
+    <spot-card spot="{{item}}" bind:tap="onSpotTap" />
+  </view>
+
+  <view class="tab-bar-safe"></view>
+</view>

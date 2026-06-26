@@ -1,0 +1,53 @@
+<view class="page-container">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <t-search
+      placeholder="搜索浪点名称或地区"
+      value="{{keyword}}"
+      bind:change="onSearchChange"
+      bind:submit="onSearchSubmit"
+      bind:clear="onSearchClear"
+    />
+  </view>
+
+  <!-- 地区筛选标签 -->
+  <view class="region-tabs" wx:if="{{regions.length > 0}}">
+    <scroll-view scroll-x class="region-scroll">
+      <view
+        class="region-tag {{activeRegion === '' ? 'active' : ''}}"
+        bindtap="onRegionChange"
+        data-region=""
+      >全部</view>
+      <view
+        class="region-tag {{activeRegion === item ? 'active' : ''}}"
+        wx:for="{{regions}}"
+        wx:key="*this"
+        bindtap="onRegionChange"
+        data-region="{{item}}"
+      >{{item}}</view>
+    </scroll-view>
+  </view>
+
+  <!-- 下拉刷新 -->
+  <t-pull-down-refresh value="{{refreshing}}" bind:refresh="onRefresh">
+    <!-- 浪点列表 -->
+    <view wx:if="{{spots.length > 0}}">
+      <view class="spot-list" wx:for="{{spots}}" wx:key="id">
+        <spot-card
+          spot="{{item}}"
+          bind:tap="onSpotTap"
+        />
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:else>
+      <t-empty
+        icon="search"
+        description="{{keyword || activeRegion ? '未找到相关浪点' : '暂无浪点数据'}}"
+      />
+    </view>
+  </t-pull-down-refresh>
+
+  <view class="tab-bar-safe"></view>
+</view>

@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "惠州推荐",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#F5F6F8",
+  "usingComponents": {
+    "t-loading": "tdesign-miniprogram/loading/loading",
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-empty": "tdesign-miniprogram/empty/empty"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "浪况详情",
+  "usingComponents": {
+    "t-loading": "tdesign-miniprogram/loading/loading",
+    "t-button": "tdesign-miniprogram/button/button"
+  }
+}

@@ -1,0 +1,26 @@
+.wave-bar {
+  display: flex;
+  align-items: center;
+  padding: 8rpx 12rpx;
+  border-radius: 8rpx;
+  margin-bottom: 8rpx;
+  position: relative;
+  overflow: hidden;
+  height: 36rpx;
+}
+
+.wave-bar-label {
+  position: relative;
+  z-index: 1;
+  min-width: 80rpx;
+}
+
+.wave-bar-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 8rpx;
+  opacity: 0.3;
+  transition: width 0.5s ease;
+}

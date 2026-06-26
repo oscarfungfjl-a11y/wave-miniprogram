@@ -1,0 +1,11 @@
+<view class="spot-card" bindtap="onTap" data-spot-id="{{spot.id}}">
+  <view class="card-info">
+    <view class="flex-between">
+      <view class="spot-name">{{spot.name}}</view>
+      <view class="spot-region text-secondary text-sm">{{spot.region}}</view>
+    </view>
+    <view class="trend-text text-sm text-secondary" wx:if="{{spot.description}}">
+      {{spot.description}}
+    </view>
+  </view>
+</view>

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "浪报",
+  "usingComponents": {
+    "spot-card": "../../components/spot-card/spot-card"
+  }
+}

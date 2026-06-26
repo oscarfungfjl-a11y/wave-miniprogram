@@ -1,0 +1,4 @@
+<view class="wave-bar" style="background-color: {{color}}20">
+  <view class="wave-bar-label text-sm text-secondary">{{label}}</view>
+  <view class="wave-bar-fill" style="width: {{value * 40}}%; background-color: {{color}};"></view>
+</view>

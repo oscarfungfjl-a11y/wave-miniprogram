@@ -1,0 +1,172 @@
+.today-stats-small {
+  display: flex;
+  gap: 12rpx;
+}
+
+.stat-item-sm {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 8rpx;
+  background: #F5F6F8;
+  border-radius: 12rpx;
+}
+
+.stat-item-sm .text-lg {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #0F6E56;
+  margin-top: 4rpx;
+  display: block;
+}
+
+.advice-box {
+  padding: 20rpx;
+  background: #F0F9F5;
+  border-radius: 12rpx;
+  border-left: 6rpx solid #0F6E56;
+  line-height: 1.6;
+}
+
+.top-card {
+  margin-bottom: 16rpx;
+  border-radius: 12rpx;
+  border: 1rpx solid rgba(15, 110, 86, 0.15);
+  overflow: hidden;
+}
+
+.top-card-header {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 20rpx;
+  background: #E1F5EE;
+}
+
+.top-spot-name {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.top-spot-area {
+  color: #5F5E5A;
+}
+
+.tier-badge {
+  margin-left: auto;
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+  font-weight: 600;
+  font-size: 22rpx;
+}
+
+.tier-high {
+  background: #0F6E56;
+  color: #FFFFFF;
+}
+
+.tier-mid {
+  background: #EF9F27;
+  color: #FFFFFF;
+}
+
+.tier-low {
+  background: #E24B4A;
+  color: #FFFFFF;
+}
+
+.top-card-body {
+  padding: 16rpx 20rpx;
+}
+
+.top-score-row {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 14rpx;
+}
+
+.top-big-score {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #0F6E56;
+  line-height: 1;
+}
+
+/* 四维得分 */
+.top-dims {
+  display: flex;
+  gap: 8rpx;
+  margin-bottom: 14rpx;
+}
+
+.top-dim-item {
+  flex: 1;
+  text-align: center;
+  padding: 10rpx 4rpx;
+  background: #F0F9F5;
+  border-radius: 8rpx;
+}
+
+.top-dim-label {
+  display: block;
+  font-size: 20rpx;
+  color: #888780;
+  margin-bottom: 2rpx;
+}
+
+.top-dim-val {
+  display: block;
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #0F6E56;
+}
+
+.top-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.top-label {
+  font-size: 22rpx;
+  color: #888780;
+  min-width: 56rpx;
+}
+
+.top-val {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #2C2C2A;
+  margin-right: 16rpx;
+}
+
+.top-time {
+  margin-top: 12rpx;
+  padding-top: 12rpx;
+  border-top: 1rpx solid rgba(0,0,0,0.04);
+}
+
+.rule-btn {
+  margin-left: 12rpx;
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  border: 2rpx solid #0F6E56;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rule-btn-text {
+  font-size: 22rpx;
+  font-weight: 700;
+  color: #0F6E56;
+  line-height: 1;
+}
+
+.flex-row {
+  display: flex;
+  align-items: center;
+}
+
+.mt-8 {
+  margin-top: 8rpx;
+}

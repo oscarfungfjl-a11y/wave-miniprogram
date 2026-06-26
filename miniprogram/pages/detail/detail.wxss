@@ -1,0 +1,170 @@
+.spot-title {
+  font-size: 36rpx;
+  font-weight: 600;
+}
+
+.spot-meta {
+  margin-top: 8rpx;
+}
+
+/* 推荐评分摘要 */
+.rec-score-hero {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 20rpx;
+}
+
+.rec-big-score {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #0F6E56;
+  line-height: 1;
+}
+
+.rec-dims {
+  display: flex;
+  gap: 12rpx;
+  margin-bottom: 12rpx;
+}
+
+.rec-dim {
+  flex: 1;
+  text-align: center;
+  padding: 14rpx 8rpx;
+  background: #F5F6F8;
+  border-radius: 10rpx;
+}
+
+.rec-dim-label {
+  display: block;
+  font-size: 22rpx;
+  color: #888780;
+  margin-bottom: 4rpx;
+}
+
+.rec-dim-val {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #0F6E56;
+}
+
+.rec-best-hour {
+  padding: 12rpx 0;
+  text-align: center;
+}
+
+/* 挡位徽章 */
+.tier-badge {
+  padding: 4rpx 14rpx;
+  border-radius: 20rpx;
+  font-weight: 600;
+  font-size: 24rpx;
+}
+
+.tier-high { background: #0F6E56; color: #FFFFFF; }
+.tier-mid  { background: #EF9F27; color: #FFFFFF; }
+.tier-low  { background: #E24B4A; color: #FFFFFF; }
+
+/* 小时预报表格 - 优化版 */
+.h-table {
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+
+.hourly-list {
+  max-height: 560rpx;
+  overflow-y: auto;
+}
+
+.h-thead {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 12rpx;
+  background: #F5F6F8;
+  border-bottom: 2rpx solid rgba(0,0,0,0.06);
+}
+
+.h-th {
+  font-size: 22rpx;
+  color: #888780;
+  font-weight: 600;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.h-tr {
+  display: flex;
+  align-items: center;
+  padding: 18rpx 12rpx;
+  border-bottom: 1rpx solid rgba(0,0,0,0.04);
+}
+
+.h-tr:nth-child(even) {
+  background: #FAFAFA;
+}
+
+.h-td {
+  font-size: 24rpx;
+  flex-shrink: 0;
+}
+
+/* 列宽分配 - 优化后 */
+.h-th-time, .h-td-time { 
+  width: 76rpx; 
+  text-align: left; 
+  color: #888780; 
+  padding-left: 4rpx;
+}
+
+.h-th-wave, .h-td-wave { 
+  width: 84rpx; 
+  text-align: right; 
+  padding-right: 8rpx;
+}
+
+.h-th-per, .h-td-per { 
+  width: 72rpx; 
+  text-align: right; 
+  padding-right: 8rpx;
+  color: #5F5E5A;
+}
+
+.h-th-dir, .h-td-dir { 
+  width: 80rpx; 
+  text-align: center; 
+}
+
+.h-th-temp, .h-td-temp { 
+  width: 72rpx; 
+  text-align: right; 
+  padding-right: 8rpx;
+  color: #5F5E5A;
+}
+
+.h-th-tide, .h-td-tide { 
+  width: 88rpx; 
+  text-align: right; 
+  padding-right: 8rpx;
+  color: #5F5E5A;
+}
+
+.h-th-pts, .h-td-pts { 
+  width: 56rpx; 
+  text-align: right; 
+  padding-right: 4rpx;
+  font-weight: 600;
+}
+
+/* 评分颜色 */
+.rec-score-high { color: #0F6E56; }
+.rec-score-mid  { color: #EF9F27; }
+.rec-score-low  { color: #E24B4A; }
+
+/* 未来天 */
+.future-day-header {
+  padding: 16rpx 20rpx;
+  background: #E1F5EE;
+  border-radius: 12rpx 12rpx 0 0;
+  margin-top: 8rpx;
+}

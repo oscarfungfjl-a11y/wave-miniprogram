@@ -1,0 +1,4 @@
+<view class="rating-badge rating-{{level}}">
+  <text class="rating-score">{{score}}</text>
+  <text class="rating-label" wx:if="{{label}}">{{label}}</text>
+</view>

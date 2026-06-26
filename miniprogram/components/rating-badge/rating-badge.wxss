@@ -1,0 +1,38 @@
+.rating-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.rating-excellent {
+  background: #1D9E75;
+  color: #FFFFFF;
+}
+
+.rating-good {
+  background: #5DCAA5;
+  color: #085041;
+}
+
+.rating-fair {
+  background: #EF9F27;
+  color: #FFFFFF;
+}
+
+.rating-poor {
+  background: #D3D1C7;
+  color: #5F5E5A;
+}
+
+.rating-score {
+  font-size: 28rpx;
+}
+
+.rating-label {
+  font-size: 20rpx;
+  opacity: 0.9;
+}

@@ -1,0 +1,21 @@
+.section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 24rpx 24rpx 0;
+}
+
+.spot-list {
+  padding: 12rpx 24rpx 0;
+}
+
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 24rpx;
+}
+
+.empty-action {
+  width: 400rpx;
+}

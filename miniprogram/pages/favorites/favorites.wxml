@@ -1,0 +1,49 @@
+<t-toast id="t-toast" />
+
+<view class="page-container">
+  <t-pull-down-refresh value="{{refreshing}}" bind:refresh="onRefresh">
+    <!-- 加载中 -->
+    <view wx:if="{{loading}}">
+      <view class="section" wx:for="{{[1,2,3]}}" wx:key="*this">
+        <t-skeleton rowCol="{{[1, {width: '80%'}, 2]}}" />
+      </view>
+    </view>
+
+    <!-- 有收藏的浪点 -->
+    <view wx:elif="{{spots.length > 0}}">
+      <view class="section-header">
+        <text class="section-title">我关注的浪点</text>
+        <text class="text-sm text-secondary">{{spots.length}} 个浪点</text>
+      </view>
+
+      <view class="spot-list" wx:for="{{spots}}" wx:key="id">
+        <spot-card
+          spot="{{item}}"
+          favorited="{{true}}"
+          bind:tap="onSpotTap"
+          bind:togglefav="onToggleFav"
+        />
+      </view>
+    </view>
+
+    <!-- 没有收藏 -->
+    <view wx:else>
+      <view class="empty-container">
+        <t-empty
+          icon="star"
+          description="还没有关注的浪点"
+        />
+        <view class="empty-action mt-24">
+          <t-button
+            theme="primary"
+            size="large"
+            block
+            bind:tap="goToSpots"
+          >去发现浪点</t-button>
+        </view>
+      </view>
+    </view>
+  </t-pull-down-refresh>
+
+  <view class="tab-bar-safe"></view>
+</view>

@@ -1,0 +1,50 @@
+.search-bar {
+  padding: 16rpx 24rpx;
+  background: #FFFFFF;
+}
+
+.region-tabs {
+  background: #FFFFFF;
+  padding: 0 0 16rpx;
+}
+
+.region-scroll {
+  display: flex;
+  white-space: nowrap;
+  padding: 0 24rpx;
+}
+
+.region-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 10rpx 24rpx;
+  margin-right: 16rpx;
+  border-radius: 24rpx;
+  font-size: 26rpx;
+  color: #5F5E5A;
+  background: #F5F6F8;
+  transition: all 0.2s ease;
+}
+
+.region-tag.active {
+  color: #FFFFFF;
+  background: #0F6E56;
+}
+
+.loading-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 120rpx 0;
+}
+
+.spot-list {
+  padding: 12rpx 24rpx 0;
+}
+
+.load-more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32rpx;
+  gap: 12rpx;
+}
