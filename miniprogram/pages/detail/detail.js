@@ -5,6 +5,13 @@ const { getSpotById } = require('../../data/spots');
 const { fetchWaveData } = require('../../services/wave-fetcher');
 const recommender = require('../../services/huizhou-recommender');
 
+var WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
+function getWeekday(dateStr) {
+  var d = new Date(dateStr.replace(/-/g, '/'));
+  return WEEKDAYS[d.getDay()];
+}
+
 Page({
   data: {
     loading: true,
@@ -184,7 +191,7 @@ Page({
           });
         }
 
-        return { date: d, hours: dayHours };
+        return { date: d, weekday: getWeekday(d), hours: dayHours };
       });
 
       that.setData({

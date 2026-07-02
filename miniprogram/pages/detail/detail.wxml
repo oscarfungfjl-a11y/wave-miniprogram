@@ -90,7 +90,7 @@
       <text class="section-title mb-16">未来7天预报</text>
       <block wx:for="{{futureDays}}" wx:key="date">
         <view class="future-day-header">
-          <text class="text-md">{{item.date}}</text>
+          <text class="text-md">{{item.date}}  {{item.weekday}}</text>
         </view>
         <view class="h-table mb-24">
           <view class="h-thead">

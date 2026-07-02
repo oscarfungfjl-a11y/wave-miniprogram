@@ -6,19 +6,19 @@
     "pages/rules/rules"
   ],
   "window": {
-    "navigationBarBackgroundColor": "#0F6E56",
+    "navigationBarBackgroundColor": "#0D8496",
     "navigationBarTitleText": "浪报",
     "navigationBarTextStyle": "white",
-    "backgroundColor": "#F5F6F8"
+    "backgroundColor": "#F5F8FA"
   },
   "tabBar": {
     "custom": true,
-    "color": "#888780",
-    "selectedColor": "#0F6E56",
-    "backgroundColor": "#FFFFFF",
+    "color": "#9BA5AF",
+    "selectedColor": "#0D8496",
+    "backgroundColor": "rgba(255,255,255,0.88)",
     "borderStyle": "white",
     "list": [
-      { "pagePath": "pages/huizhou/huizhou", "text": "双月湾" },
+      { "pagePath": "pages/huizhou/huizhou", "text": "首页" },
       { "pagePath": "pages/spots/spots", "text": "浪点" }
     ]
   },

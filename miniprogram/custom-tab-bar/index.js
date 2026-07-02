@@ -2,7 +2,7 @@ Component({
   data: {
     selected: 0,
     list: [
-      { pagePath: '/pages/huizhou/huizhou', text: '双月湾', icon: 'location' },
+      { pagePath: '/pages/huizhou/huizhou', text: '首页', icon: 'location' },
       { pagePath: '/pages/spots/spots', text: '浪点', icon: 'search' },
     ],
   },

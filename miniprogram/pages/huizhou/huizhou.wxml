@@ -7,7 +7,7 @@
   <!-- 加载失败 -->
   <view wx:elif="{{errorMsg}}" class="loading-wrap">
     <view style="text-align:center;padding:40rpx;">
-      <text style="color:#E24B4A;">{{errorMsg}}</text>
+      <text style="color:#CD4035;">{{errorMsg}}</text>
       <view style="margin-top:20rpx;">
         <t-button theme="primary" size="small" bindtap="onRetryLoad">重试</t-button>
       </view>
@@ -15,9 +15,51 @@
   </view>
 
   <block wx:else>
+    <!-- 日期筛选 -->
+    <view class="date-filter">
+      <view class="date-chips">
+        <view
+          class="chip {{item.active ? 'chip-active' : ''}}"
+          wx:for="{{dateChips}}"
+          wx:key="label"
+          data-index="{{index}}"
+          bindtap="onTapChip"
+        >{{item.label}}</view>
+      </view>
+      <view class="chip chip-picker" bindtap="onOpenCalendar">
+        <text>📅</text>
+      </view>
+    </view>
+
+    <!-- 日历弹窗 -->
+    <view class="cal-overlay" wx:if="{{showCalendar}}" bindtap="onCloseCalendar">
+      <view class="cal-popup" catchtap="">
+        <view class="cal-hd">
+          <text class="cal-arrow" bindtap="onPrevMonth">◀</text>
+          <text class="cal-title">{{calYear}}年 {{calMonth + 1}}月</text>
+          <text class="cal-arrow" bindtap="onNextMonth">▶</text>
+        </view>
+        <view class="cal-weekday-row">
+          <text class="cal-wd" wx:for="{{['日','一','二','三','四','五','六']}}" wx:key="*this">{{item}}</text>
+        </view>
+        <view class="cal-grid">
+          <view class="cal-row" wx:for="{{calMatrix}}" wx:key="index">
+            <view
+              class="cal-day {{cell ? '' : 'cal-empty'}} {{cell && cell.date === selectedDate ? 'cal-sel' : ''}} {{cell && cell.date < calMinDate ? 'cal-disabled' : ''}} {{cell && cell.date > calMaxDate ? 'cal-disabled' : ''}} {{cell && cell.isToday ? 'cal-today' : ''}}"
+              wx:for="{{item}}" wx:for-item="cell" wx:key="index"
+              data-date="{{cell ? cell.date : ''}}"
+              bindtap="onTapCalDay"
+            >
+              <text wx:if="{{cell}}">{{cell.day}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
     <!-- 综合建议 -->
     <view class="section" wx:if="{{advice}}">
-      <text class="section-title mb-12">综合建议</text>
+      <text class="section-title mb-12">{{dateLabel}}综合建议</text>
       <view class="advice-box">
         <text class="text-sm">{{advice}}</text>
       </view>
@@ -27,7 +69,7 @@
     <view class="section">
       <view class="flex-between mb-16">
         <view class="flex-row">
-          <text class="section-title">推荐浪点</text>
+          <text class="section-title">{{dateLabel}}推荐浪点</text>
           <view class="rule-btn" bindtap="onShowRules">
             <text class="rule-btn-text">?</text>
           </view>
@@ -69,8 +111,8 @@
               </view>
             </view>
             <view class="top-row">
-              <text class="top-label">平均浪高</text><text class="top-val">{{item.avgWaveH}}m</text>
-              <text class="top-label">平均周期</text><text class="top-val">{{item.avgSwell}}s</text>
+              <text class="top-label">浪高</text><text class="top-val">{{item.waveRange}}</text>
+              <text class="top-label">周期</text><text class="top-val">{{item.swellRange}}</text>
               <text class="top-label">潮高</text><text class="top-val">{{item.avgSeaLevel}}m</text>
             </view>
             <view class="top-time">

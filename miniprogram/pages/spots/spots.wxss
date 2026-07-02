@@ -1,10 +1,9 @@
 .search-bar {
   padding: 16rpx 24rpx;
-  background: #FFFFFF;
+  background: rgba(255,255,255,0.78);
 }
 
 .region-tabs {
-  background: #FFFFFF;
   padding: 0 0 16rpx;
 }
 
@@ -21,14 +20,16 @@
   margin-right: 16rpx;
   border-radius: 24rpx;
   font-size: 26rpx;
-  color: #5F5E5A;
-  background: #F5F6F8;
+  color: #59616B;
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(0,0,0,0.06);
   transition: all 0.2s ease;
 }
 
 .region-tag.active {
   color: #FFFFFF;
-  background: #0F6E56;
+  background: #0D8496;
+  border-color: #0D8496;
 }
 
 .loading-wrap {
