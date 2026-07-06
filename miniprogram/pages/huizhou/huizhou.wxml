@@ -80,35 +80,16 @@
       <!-- 推荐浪点卡片 -->
       <view wx:if="{{topSpots.length > 0}}">
         <view class="top-card" wx:for="{{topSpots}}" wx:key="spotId" bindtap="onTopSpotTap" data-spot-id="{{item.spotId}}">
-          <view class="top-card-header">
+          <view class="top-card-header" catchtap="onHeaderJump" data-cid="{{item.videoCid}}">
             <text class="top-spot-name">{{item.name}}</text>
             <text class="top-spot-area text-sm ml-12">（{{item.area}}）</text>
-            <view class="tier-badge tier-{{item.overallTier}} text-sm">
-              {{item.overallTier === 'high' ? '高推荐' : (item.overallTier === 'mid' ? '中推荐' : '低推荐')}}
+            <view class="star-badge star-bg-{{item.stars}} text-sm">
+              {{item.starLabel}}
             </view>
           </view>
           <view class="top-card-body">
             <view class="top-score-row">
-              <text class="top-big-score">{{item.bestScore}}</text>
-              <text class="text-xs text-secondary">分</text>
-            </view>
-            <view class="top-dims" wx:if="{{item.dimScores}}">
-              <view class="top-dim-item">
-                <text class="top-dim-label">浪向</text>
-                <text class="top-dim-val">{{item.dimScores.dirScore}}/30</text>
-              </view>
-              <view class="top-dim-item">
-                <text class="top-dim-label">浪高</text>
-                <text class="top-dim-val">{{item.dimScores.waveScore}}/30</text>
-              </view>
-              <view class="top-dim-item">
-                <text class="top-dim-label">周期</text>
-                <text class="top-dim-val">{{item.dimScores.swellScore}}/25</text>
-              </view>
-              <view class="top-dim-item">
-                <text class="top-dim-label">潮汐</text>
-                <text class="top-dim-val">{{item.dimScores.tideScore}}/15</text>
-              </view>
+              <text class="top-big-stars star-c-{{item.stars}}">{{item.starStr}}</text>
             </view>
             <view class="top-row">
               <text class="top-label">浪高</text><text class="top-val">{{item.waveRange}}</text>

@@ -1,8 +1,8 @@
 /**
- * 双月湾浪点推荐引擎 v2
- * 基于「双月湾冲浪浪点分档推荐打分规则」
- * 四维加权百分制：浪向适配30 + 浪高匹配30 + 涌浪周期25 + 潮汐水位15
- * 挡位：高推荐80-100 / 中推荐60-79 / 低推荐0-59
+ * 双月湾浪点推荐引擎 v3
+ * 四维加权打分 + 五星评级
+ * 浪向适配(最高28) + 浪高匹配(最高28) + 涌浪周期(最高23) + 潮汐水位(最高15) = 理论满分94
+ * 星级映射：5★高推荐(≥80) / 4★推荐(≥63) / 3★一般(≥45) / 2★较差(≥25) / 1★不推荐(<25)
  */
 
 /**
@@ -61,6 +61,7 @@ var SPOT_SCORING = {
     name: 'LOOP浪点',
     area: '东岸',
     level: '全水平通用', bottom: '纯沙底安全浪点',
+    videoCid: 3,
     dirRules: [
       { dirs: ['东', '东南'], score: 28 },
       { dirs: ['东北'], score: 20 },
@@ -75,6 +76,7 @@ var SPOT_SCORING = {
     name: '情人岛浪点',
     area: '东岸',
     level: '新手入门', bottom: '平缓沙底',
+    videoCid: 67,
     dirRules: [
       { dirs: ['东', '东南'], score: 28 },
       { dirs: ['东北', '南'], score: 20 },
@@ -85,9 +87,10 @@ var SPOT_SCORING = {
     tideNote: '中潮-高潮段最佳',
   },
   'huizhou-honghaiwan': {
-    name: '虹海湾主沙滩浪点',
+    name: '虹海湾（山海里）浪点',
     area: '东岸',
     level: '入门-进阶', bottom: '牛奶浪特色',
+    videoCid: 54,
     dirRules: [
       { dirs: ['东', '东南'], score: 28 },
       { dirs: ['东北', '南'], score: 18 },
@@ -101,6 +104,7 @@ var SPOT_SCORING = {
     name: '高洋尾浪点',
     area: '东岸',
     level: '进阶-资深', bottom: '礁石旁强力浪点',
+    videoCid: 1,
     dirRules: [
       { dirs: ['东南', '南'], score: 28 },
       { dirs: ['东', '西南'], score: 18 },
@@ -114,6 +118,7 @@ var SPOT_SCORING = {
     name: '万科沙滩浪点',
     area: '西岸',
     level: '纯新手·亲子', bottom: '内湾平缓浪点',
+    videoCid: 53,
     dirRules: [
       { dirs: ['西南', '南'], score: 28 },
       { dirs: ['西'], score: 20 },
@@ -127,6 +132,7 @@ var SPOT_SCORING = {
     name: '狮子岛浪点',
     area: '西岸',
     level: '入门-进阶', bottom: '西岸优质浪点',
+    videoCid: 2,
     dirRules: [
       { dirs: ['西南', '南'], score: 28 },
       { dirs: ['西'], score: 18 },
@@ -163,6 +169,31 @@ function tideScore(seaLevel, dailyMean, dailyMax, dailyMin) {
 }
 
 /**
+ * 分数 → 星级映射
+ * 5★高推荐 ≥80 | 4★推荐 ≥63 | 3★一般 ≥45 | 2★较差 ≥25 | 1★不推荐 <25
+ */
+function scoreToStars(score) {
+  if (score >= 80) return 5;
+  if (score >= 63) return 4;
+  if (score >= 45) return 3;
+  if (score >= 25) return 2;
+  return 1;
+}
+
+var STAR_LABELS = {
+  5: '高推荐',
+  4: '推荐',
+  3: '一般',
+  2: '较差',
+  1: '不推荐',
+};
+
+/** 生成星形字符串，如 3 → "★★★☆☆" */
+function starString(stars) {
+  return '★★★★★☆☆☆☆☆'.slice(5 - stars, 10 - stars);
+}
+
+/**
  * 对单个浪点逐小时打分
  * @param {Array} hourlyData - 包含 sea_level_m 的小时数据
  * @param {number} dailySeaMean - 当日海平面均值
@@ -188,10 +219,7 @@ function scoreHourly(spotId, hourlyData, dailySeaMean, dailySeaMax, dailySeaMin)
     var tideS = tideScore(h.sea_level_m, dailySeaMean, dailySeaMax, dailySeaMin);
 
     var total = Math.round(dirS + waveS + swellS + tideS);
-
-    var tier = 'low';
-    if (total >= 80) tier = 'high';
-    else if (total >= 60) tier = 'mid';
+    var stars = scoreToStars(total);
 
     results.push({
       time: h.time_label,
@@ -200,7 +228,7 @@ function scoreHourly(spotId, hourlyData, dailySeaMean, dailySeaMax, dailySeaMin)
       waveDir: waveDir,
       seaLevel: h.sea_level_m,
       totalScore: total,
-      tier: tier,
+      stars: stars,
       dirScore: Math.round(dirS),
       waveScore: Math.round(waveS),
       swellScore: Math.round(swellS),
@@ -237,15 +265,15 @@ function mergeTimeRanges(hours) {
  */
 function summarizeSpot(spotId, scores) {
   var rules = SPOT_SCORING[spotId];
-  var highHours = [];
-  var midHours = [];
+  var recHours = [];   // 4★及以上
+  var avgHours = [];   // 3★
   var bestScore = 0;
 
   for (var i = 0; i < scores.length; i++) {
     var s = scores[i];
     if (s.totalScore > bestScore) bestScore = s.totalScore;
-    if (s.tier === 'high') highHours.push(s.time);
-    else if (s.tier === 'mid') midHours.push(s.time);
+    if (s.stars >= 4) recHours.push(s.time);
+    else if (s.stars === 3) avgHours.push(s.time);
   }
 
   // 取最佳3小时的浪况均值
@@ -258,12 +286,10 @@ function summarizeSpot(spotId, scores) {
     avgSeaLevel = top3.reduce(function (sum, s) { return sum + (s.seaLevel || 0); }, 0) / top3.length;
   }
 
-  var overallTier = 'low';
-  if (bestScore >= 80) overallTier = 'high';
-  else if (bestScore >= 60) overallTier = 'mid';
+  var stars = scoreToStars(bestScore);
 
   var timeText = '';
-  var targetHours = highHours.length > 0 ? highHours : midHours;
+  var targetHours = recHours.length > 0 ? recHours : avgHours;
   timeText = mergeTimeRanges(targetHours);
 
   var bestHourScores = sorted.length > 0 ? {
@@ -280,11 +306,14 @@ function summarizeSpot(spotId, scores) {
     level: rules.level,
     bottom: rules.bottom,
     tideNote: rules.tideNote,
+    videoCid: rules.videoCid,
     bestScore: bestScore,
-    overallTier: overallTier,
+    stars: stars,
+    starLabel: STAR_LABELS[stars],
+    starStr: starString(stars),
     timeRange: timeText,
-    highHours: highHours.length,
-    midHours: midHours.length,
+    recHours: recHours.length,
+    avgHours: avgHours.length,
     avgWaveH: avgWaveH.toFixed(1),
     avgSwell: avgSwell.toFixed(1),
     avgSeaLevel: avgSeaLevel.toFixed(2),
@@ -337,8 +366,8 @@ function buildAdvice(summaries, todayWaveH, todaySwell, todayTemp) {
   if (summaries.length === 0) return '暂无数据';
 
   var best = summaries[0];
-  if (best.bestScore < 60) {
-    // 无推荐
+  if (best.stars < 3) {
+    // 1-2★ 不推荐
     var reasons = [];
     if (todaySwell < 6) reasons.push('涌浪周期过低（' + todaySwell.toFixed(1) + 's）');
     if (todayWaveH < 0.3) reasons.push('浪高偏低（' + todayWaveH.toFixed(1) + 'm）');
@@ -348,16 +377,16 @@ function buildAdvice(summaries, todayWaveH, todaySwell, todayTemp) {
   }
 
   var parts = [];
-  var highs = summaries.filter(function (s) { return s.overallTier === 'high'; });
-  var mids = summaries.filter(function (s) { return s.overallTier === 'mid'; });
+  var great = summaries.filter(function (s) { return s.stars === 5; });
+  var good = summaries.filter(function (s) { return s.stars === 4; });
 
-  if (highs.length > 0) {
-    var hNames = highs.slice(0, 3).map(function (s) { return s.name; });
-    parts.push('高推荐浪点：' + hNames.join('、'));
+  if (great.length > 0) {
+    var gNames = great.slice(0, 3).map(function (s) { return s.name; });
+    parts.push('高推荐浪点（5★）：' + gNames.join('、'));
   }
-  if (mids.length > 0 && highs.length < 2) {
-    var mNames = mids.slice(0, 2).map(function (s) { return s.name; });
-    parts.push('中推荐浪点：' + mNames.join('、'));
+  if (good.length > 0 && great.length < 2) {
+    var goNames = good.slice(0, 2).map(function (s) { return s.name; });
+    parts.push('推荐浪点（4★）：' + goNames.join('、'));
   }
 
   if (todaySwell >= 10) parts.push('涌浪周期优秀（' + todaySwell.toFixed(1) + 's）');
@@ -378,6 +407,9 @@ module.exports = {
   SPOT_SCORING: SPOT_SCORING,
   evaluateAll: evaluateAll,
   scoreHourly: scoreHourly,
+  scoreToStars: scoreToStars,
+  starString: starString,
+  STAR_LABELS: STAR_LABELS,
   mergeTimeRanges: mergeTimeRanges,
   buildAdvice: buildAdvice,
 };

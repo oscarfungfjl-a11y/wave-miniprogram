@@ -4,22 +4,30 @@
     <text class="section-title">打分体系</text>
     <view class="card">
       <view class="formula-box">
-        <text class="formula-text">总分 = 浪向适配30分 + 浪高匹配30分 + 涌浪周期25分 + 潮汐适配15分</text>
+        <text class="formula-text">四维打分（浪向 + 浪高 + 周期 + 潮汐）→ 星级映射</text>
       </view>
       <view class="tier-row">
-        <view class="tier-item tier-high">高推荐</view>
-        <text class="tier-desc">80 – 100分</text>
+        <view class="star-tier star-tier-5">★★★★★</view>
+        <text class="tier-desc">高推荐（≥80分）</text>
       </view>
       <view class="tier-row">
-        <view class="tier-item tier-mid">中推荐</view>
-        <text class="tier-desc">60 – 79分</text>
+        <view class="star-tier star-tier-4">★★★★☆</view>
+        <text class="tier-desc">推荐（≥63分）</text>
       </view>
       <view class="tier-row">
-        <view class="tier-item tier-low">低推荐</view>
-        <text class="tier-desc">0 – 59分</text>
+        <view class="star-tier star-tier-3">★★★☆☆</view>
+        <text class="tier-desc">一般（≥45分）</text>
+      </view>
+      <view class="tier-row">
+        <view class="star-tier star-tier-2">★★☆☆☆</view>
+        <text class="tier-desc">较差（≥25分）</text>
+      </view>
+      <view class="tier-row">
+        <view class="star-tier star-tier-1">★☆☆☆☆</view>
+        <text class="tier-desc">不推荐（&lt;25分）</text>
       </view>
       <view class="note-box mt-16">
-        <text class="text-xs text-secondary">所有维度均采用三点线性插值算法，确保分数平滑过渡。</text>
+        <text class="text-xs text-secondary">四维均采用三点线性插值算法，确保分数平滑过渡。理论满分94分（浪向28 + 浪高28 + 周期23 + 潮汐15）。</text>
       </view>
     </view>
   </view>
@@ -27,22 +35,105 @@
   <!-- 维度详解 -->
   <view class="section">
     <text class="section-title">四维详解</text>
+
+    <!-- 维度1: 浪向 -->
+    <view class="card dim-card">
+      <view class="dim-header">
+        <view class="dim-badge dim-badge-dir">28分</view>
+        <text class="dim-title">浪向适配 — 定生死</text>
+      </view>
+      <text class="text-sm dim-desc">浪向是"能不能冲"的底线。各浪点根据海岸线朝向配置了方向偏好规则。</text>
+      <view class="dim-detail">
+        <text class="text-xs text-secondary">浪向按 8 个方向组分类：北/东北/东/东南/南/西南/西/西北。采用字符串精确匹配逐条规则，分值不插值。</text>
+      </view>
+      <view class="dim-example-box">
+        <text class="dim-example-title">示例：LOOP 浪点（东岸）</text>
+        <text class="text-xs text-secondary">东 / 东南 → 28 分 | 东北 → 20 分 | 南 / 北 → 10 分 | 西 / 西南 / 西北 → 0 分</text>
+      </view>
+    </view>
+
+    <!-- 维度2: 浪高 -->
+    <view class="card dim-card mt-12">
+      <view class="dim-header">
+        <view class="dim-badge dim-badge-wave">28分</view>
+        <text class="dim-title">浪高匹配 — 定门槛</text>
+      </view>
+      <text class="text-sm dim-desc">各浪点设独立阈值，三点线性插值确保分数平滑过渡。</text>
+      <view class="dim-detail">
+        <text class="text-xs text-secondary">每个浪点有 4 个锚点 [浪高, 得分]，如 LOOP：[0.6m→28, 1.5m→28, 2.0m→10, 3.0m→0]。阈值之间的区间线性插值。例如 1.8m 浪高在 1.5m→2.0m 之间，线性插值 ≈ 19 分。</text>
+      </view>
+    </view>
+
+    <!-- 维度3: 周期 -->
+    <view class="card dim-card mt-12">
+      <view class="dim-header">
+        <view class="dim-badge dim-badge-swell">23分</view>
+        <text class="dim-title">涌浪周期 — 定品质</text>
+      </view>
+      <text class="text-sm dim-desc">周期越长，浪的能量越强、越整齐。3 锚点线性插值。</text>
+      <view class="dim-detail">
+        <text class="text-xs text-secondary">通用锚点：≥10s → 23 分 | 7s → 15 分 | 5s → 5 分。高洋尾要求更高（≥12s 满分），万科/情人岛要求更低（≥8s 满分）。</text>
+      </view>
+    </view>
+
+    <!-- 维度4: 潮汐 -->
+    <view class="card dim-card mt-12">
+      <view class="dim-header">
+        <view class="dim-badge dim-badge-tide">15分</view>
+        <text class="dim-title">潮汐适配 — 定时机</text>
+      </view>
+      <text class="text-sm dim-desc">基于海平面高度相对于当日均值的偏离度。数据来源：Open-Meteo sea_level_height_msl（含潮汐成分）。</text>
+      <view class="dim-detail">
+        <text class="text-xs text-secondary">算法：① 计算当日海平面均值/最大值/最小值 → ② 将当前小时海平面归一化到 [-1, 1] → ③ 映射得分 = 7.5 + normalized × 7.5（范围 0–15 分）。高于日均值（涨潮/高潮）→ 高分，低于日均值（低潮）→ 低分。无数据或潮差极小时默认 8 分。</text>
+      </view>
+    </view>
+
+    <!-- 权重设计逻辑 -->
+    <view class="card mt-12">
+      <text class="ref-subtitle">权重设计逻辑</text>
+      <view class="weight-explain">
+        <text class="text-sm">浪向 28 + 浪高 28 = <text class="ref-link">能不能冲</text>（合计最高56分，底线条件）</text>
+      </view>
+      <view class="weight-explain">
+        <text class="text-sm">涌浪周期 23 = <text class="ref-link">好不好</text>（品质调节）</text>
+      </view>
+      <view class="weight-explain">
+        <text class="text-sm">潮汐 15 = <text class="ref-link">什么时段去</text>（时机优化）</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 打分流程 -->
+  <view class="section">
+    <text class="section-title">打分流程</text>
     <view class="card">
-      <view class="dim-item">
-        <text class="dim-label">浪向适配（30分）</text>
-        <text class="text-sm">浪向按方向组分类：北/东北/东/东南/南/西南/西/西北。各浪点根据朝向，不同方向组对应不同分数档。</text>
+      <view class="flow-step">
+        <view class="flow-num">1</view>
+        <view class="flow-body">
+          <text class="ref-source-title">逐小时四维打分</text>
+          <text class="text-xs text-secondary">对每个浪点的每小时数据，分别计算浪向、浪高、周期、潮汐四维得分，求和得到该小时总分（0–94）。</text>
+        </view>
       </view>
-      <view class="dim-item">
-        <text class="dim-label">浪高匹配（30分）</text>
-        <text class="text-sm">浪点有各自的适宜浪高区间。区间内满分，偏离后插值递减。</text>
+      <view class="flow-step">
+        <view class="flow-num">2</view>
+        <view class="flow-body">
+          <text class="ref-source-title">取最高分定挡位</text>
+          <text class="text-xs text-secondary">取当日所有小时中的最高分，映射为星级：≥80 → 5★高推荐 / ≥63 → 4★推荐 / ≥45 → 3★一般 / ≥25 → 2★较差 / &lt;25 → 1★不推荐。</text>
+        </view>
       </view>
-      <view class="dim-item">
-        <text class="dim-label">涌浪周期（25分）</text>
-        <text class="text-sm">周期越长，浪的能量越强越整齐。各浪点设优质/可接受/差三段阈值。</text>
+      <view class="flow-step">
+        <view class="flow-num">3</view>
+        <view class="flow-body">
+          <text class="ref-source-title">合并连续最佳时段</text>
+          <text class="text-xs text-secondary">将连续的 4★以上（推荐）或 3★（一般）小时合并为时段文本（如 "08:00~11:00、14:00~15:00"），优先展示高星级时段。</text>
+        </view>
       </view>
-      <view class="dim-item">
-        <text class="dim-label">潮汐适配（15分）</text>
-        <text class="text-sm">基于 Open-Meteo 海平面高度数据（sea_level_height_msl），将每小时海平面与当日均值比较。高于均值视为涨潮/高潮段→高分，低于均值→低分。无数据时默认8分。</text>
+      <view class="flow-step">
+        <view class="flow-num">4</view>
+        <view class="flow-body">
+          <text class="ref-source-title">排序推荐</text>
+          <text class="text-xs text-secondary">所有浪点按最高分降序排列，取前 3 名展示在首页推荐区。</text>
+        </view>
       </view>
     </view>
   </view>
@@ -81,6 +172,110 @@
           <text class="info-val text-sm">{{item.tideNote}}</text>
         </view>
       </view>
+    </view>
+  </view>
+
+  <!-- 数据来源与参考依据 -->
+  <view class="section">
+    <text class="section-title">数据来源与参考依据</text>
+
+    <!-- 波浪数据模型 -->
+    <view class="card">
+      <text class="ref-subtitle">🌊 波浪数据模型</text>
+      <text class="text-sm ref-body">本小程序通过 <text class="ref-link">Open-Meteo Marine API</text> 获取全球海浪预报数据。该 API 整合了多个世界主流气象机构的波浪模型，默认选择覆盖该位置的最优模型。</text>
+
+      <view class="ref-model-list">
+        <view class="ref-model-item">
+          <text class="ref-model-name">ECMWF WAM (ecWAM)</text>
+          <text class="text-xs text-secondary">欧洲中期天气预报中心（ECMWF）业务海浪模型，全球 9 km 分辨率，逐小时数据，每 6 小时更新一次，提供 15 天预报。</text>
+        </view>
+        <view class="ref-model-item">
+          <text class="ref-model-name">NCEP GFS Wave (WAVEWATCH III)</text>
+          <text class="text-xs text-secondary">美国 NOAA / NCEP 第三代海浪模型，0.25° 分辨率，逐小时数据，16 天预报。WAVEWATCH III 是全球应用最广泛的海浪数值模式。</text>
+        </view>
+        <view class="ref-model-item">
+          <text class="ref-model-name">MeteoFrance MFWAM</text>
+          <text class="text-xs text-secondary">法国气象局全球海浪模型，0.08°（约 8 km）分辨率，3 小时间隔，10 天预报。</text>
+        </view>
+        <view class="ref-model-item">
+          <text class="ref-model-name">ERA5-Ocean (历史再分析)</text>
+          <text class="text-xs text-secondary">ECMWF 第五代全球气候再分析数据集，0.5° 分辨率，逐小时，覆盖 1940 年至今。</text>
+        </view>
+      </view>
+
+      <text class="text-sm ref-body mt-16">本程序调用的核心变量：<text class="ref-link">有效波高</text>（wave_height）、<text class="ref-link">平均波向</text>（wave_direction）、<text class="ref-link">平均周期</text>（wave_period）、<text class="ref-link">涌浪波高/方向/周期</text>、<text class="ref-link">海平面高度</text>（sea_level_height_msl，含潮汐成分）、<text class="ref-link">海面温度</text>（sea_surface_temperature）。</text>
+    </view>
+
+    <!-- 学术基础 -->
+    <view class="card mt-16">
+      <text class="ref-subtitle">📚 学术基础</text>
+      <view class="ref-paper-list">
+        <view class="ref-paper-item">
+          <text class="text-sm ref-paper-title">WAVEWATCH III Development Group (2019).</text>
+          <text class="text-xs text-secondary">"User Manual and System Documentation of WAVEWATCH III version 6.07." NOAA / NCEP / EMC, Technical Note 333.</text>
+        </view>
+        <view class="ref-paper-item">
+          <text class="text-sm ref-paper-title">ECMWF (2023).</text>
+          <text class="text-xs text-secondary">"IFS Documentation CY48R1 — Part VII: ECMWF Wave Model." ECMWF, Reading, UK.</text>
+        </view>
+        <view class="ref-paper-item">
+          <text class="text-sm ref-paper-title">Hersbach, H. et al. (2020).</text>
+          <text class="text-xs text-secondary">"The ERA5 Global Reanalysis." Quarterly Journal of the Royal Meteorological Society, 146(730), 1999–2049.</text>
+        </view>
+        <view class="ref-paper-item">
+          <text class="text-sm ref-paper-title">ECMWF (2024).</text>
+          <text class="text-xs text-secondary">"Product User Guide for Sea Level and Ocean Wave Products" — ERA5 海浪参数的验证精度：有效波高 RMSE ≈ 0.3 m（全球浮标比对），适用于沿海冲浪浪况初步评估。</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 本地经验 -->
+    <view class="card mt-16">
+      <text class="ref-subtitle">🏄 双月湾本地经验</text>
+      <text class="text-sm ref-body">各浪点的评分参数（浪向偏好、浪高/周期阈值、潮汐规律）参考了以下来源的双月湾冲浪社区长期实测经验：</text>
+
+      <view class="ref-source-list">
+        <view class="ref-source-item">
+          <text class="ref-bullet">•</text>
+          <view class="ref-source-body">
+            <text class="text-sm ref-source-title">潮汐发电站（公众号）</text>
+            <text class="text-xs text-secondary">双月湾浪点详细攻略：东岸浪点偏好东南/东向浪，西岸浪点偏好西南/南向浪；东风天虹海湾浪况完美，西南风侧风不适合冲浪。</text>
+          </view>
+        </view>
+        <view class="ref-source-item">
+          <text class="ref-bullet">•</text>
+          <view class="ref-source-body">
+            <text class="text-sm ref-source-title">8MM 冲浪俱乐部</text>
+            <text class="text-xs text-secondary">双月湾最早的冲浪俱乐部之一（惠州 + 三亚双店），提供各浪点适宜人群（新手/进阶/资深）的实测分级。</text>
+          </view>
+        </view>
+        <view class="ref-source-item">
+          <text class="ref-bullet">•</text>
+          <view class="ref-source-body">
+            <text class="text-sm ref-source-title">LOOP 冲浪俱乐部</text>
+            <text class="text-xs text-secondary">双月湾 LOOP 浪点核心运营方，提供浪点实时浪况反馈与初学者教学经验。</text>
+          </view>
+        </view>
+        <view class="ref-source-item">
+          <text class="ref-bullet">•</text>
+          <view class="ref-source-body">
+            <text class="text-sm ref-source-title">WaterLive 水上运动社区</text>
+            <text class="text-xs text-secondary">国内浪点系统介绍：高洋尾（H04）为虹海湾最稳定的浪点；虹海湾 H02 南/西南风时浪况稳定，东风时整条线报废。</text>
+          </view>
+        </view>
+        <view class="ref-source-item">
+          <text class="ref-bullet">•</text>
+          <view class="ref-source-body">
+            <text class="text-sm ref-source-title">本地浪人社区实测</text>
+            <text class="text-xs text-secondary">双月湾多年实测经验共识：涨潮至高潮段浪型最佳，低潮礁石暴露增加风险；夏季台风季浪大，冬季东北季风持续有浪。</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 免责声明 -->
+    <view class="note-box mt-16">
+      <text class="text-xs text-secondary">⚠️ 免责声明：本小程序的浪况打分仅供参考，不构成冲浪安全建议。实际浪况受瞬时天气、海底地形、潮汐变化等多重因素影响，与模型预报可能存在偏差。下水前请务必自行评估实际海况，量力而行。沿海区域海平面数据精度有限，不可替代航海天文历。</text>
     </view>
   </view>
 

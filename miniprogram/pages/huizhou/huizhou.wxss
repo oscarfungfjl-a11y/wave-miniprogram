@@ -166,7 +166,7 @@
 
 .top-spot-area { color: #9BA5AF; }
 
-.tier-badge {
+.star-badge {
   margin-left: auto;
   padding: 4rpx 14rpx;
   border-radius: 20rpx;
@@ -175,9 +175,19 @@
   letter-spacing: 0.03em;
 }
 
-.tier-high { background: #3D8B5E; color: #FFFFFF; }
-.tier-mid  { background: #DC9018; color: #FFFFFF; }
-.tier-low  { background: #CD4035; color: #FFFFFF; }
+/* 徽章背景色 */
+.star-bg-5 { background: #3D8B5E; color: #FFFFFF; }
+.star-bg-4 { background: #0D8496; color: #FFFFFF; }
+.star-bg-3 { background: #DC9018; color: #FFFFFF; }
+.star-bg-2 { background: #E07B3B; color: #FFFFFF; }
+.star-bg-1 { background: #CD4035; color: #FFFFFF; }
+
+/* 文字色 */
+.star-c-5 { color: #3D8B5E; }
+.star-c-4 { color: #0D8496; }
+.star-c-3 { color: #DC9018; }
+.star-c-2 { color: #E07B3B; }
+.star-c-1 { color: #CD4035; }
 
 .top-card-body { padding: 18rpx 24rpx; }
 
@@ -187,11 +197,18 @@
   margin-bottom: 16rpx;
 }
 
-.top-big-score {
-  font-size: 52rpx;
+.top-big-stars {
+  font-size: 48rpx;
   font-weight: 700;
-  color: #DC9018;
   line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.top-star-label {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-left: 12rpx;
+  color: #59616B;
 }
 
 .top-dims { display: flex; gap: 8rpx; margin-bottom: 16rpx; }

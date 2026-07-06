@@ -16,11 +16,18 @@
   margin-bottom: 20rpx;
 }
 
-.rec-big-score {
-  font-size: 64rpx;
+.rec-big-stars {
+  font-size: 56rpx;
   font-weight: 700;
-  color: #DC9018;
   line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.rec-star-label {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-left: 12rpx;
+  color: #59616B;
 }
 
 /* 四维数据卡片 */
@@ -60,8 +67,8 @@
   color: #59616B;
 }
 
-/* 挡位徽章 */
-.tier-badge {
+/* 星级徽章 */
+.star-badge {
   padding: 5rpx 16rpx;
   border-radius: 20rpx;
   font-weight: 600;
@@ -69,9 +76,18 @@
   letter-spacing: 0.03em;
 }
 
-.tier-high { background: #3D8B5E; color: #FFFFFF; }
-.tier-mid  { background: #DC9018; color: #FFFFFF; }
-.tier-low  { background: #CD4035; color: #FFFFFF; }
+.star-bg-5 { background: #3D8B5E; color: #FFFFFF; }
+.star-bg-4 { background: #0D8496; color: #FFFFFF; }
+.star-bg-3 { background: #DC9018; color: #FFFFFF; }
+.star-bg-2 { background: #E07B3B; color: #FFFFFF; }
+.star-bg-1 { background: #CD4035; color: #FFFFFF; }
+
+/* 文字色 */
+.star-c-5 { color: #3D8B5E; }
+.star-c-4 { color: #0D8496; }
+.star-c-3 { color: #DC9018; }
+.star-c-2 { color: #E07B3B; }
+.star-c-1 { color: #CD4035; }
 
 /* 小时预报表格 */
 .h-table {
@@ -168,10 +184,12 @@
   font-weight: 600;
 }
 
-/* 评分颜色 */
-.rec-score-high { color: #3D8B5E; }
-.rec-score-mid  { color: #DC9018; }
-.rec-score-low  { color: #CD4035; }
+/* 评分颜色（按星级） */
+.rec-score-s5 { color: #3D8B5E; }
+.rec-score-s4 { color: #0D8496; }
+.rec-score-s3 { color: #DC9018; }
+.rec-score-s2 { color: #E07B3B; }
+.rec-score-s1 { color: #CD4035; }
 
 /* 未来天 */
 .future-day-header {

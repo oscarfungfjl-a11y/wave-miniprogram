@@ -44,28 +44,19 @@
   margin-bottom: 8rpx;
 }
 
-.tier-item {
-  padding: 4rpx 16rpx;
-  border-radius: 20rpx;
-  font-size: 24rpx;
-  font-weight: 600;
+.star-tier {
+  font-size: 28rpx;
+  font-weight: 700;
   margin-right: 12rpx;
+  letter-spacing: 0.02em;
+  min-width: 160rpx;
 }
 
-.tier-high {
-  background: #3D8B5E;
-  color: #FFFFFF;
-}
-
-.tier-mid {
-  background: #DC9018;
-  color: #FFFFFF;
-}
-
-.tier-low {
-  background: #CD4035;
-  color: #FFFFFF;
-}
+.star-tier-5 { color: #3D8B5E; }
+.star-tier-4 { color: #0D8496; }
+.star-tier-3 { color: #DC9018; }
+.star-tier-2 { color: #E07B3B; }
+.star-tier-1 { color: #CD4035; }
 
 .tier-desc {
   font-size: 26rpx;
@@ -152,4 +143,198 @@
 .text-sm { font-size: 24rpx; }
 .text-secondary { color: #9BA5AF; }
 .mt-16 { margin-top: 16rpx; }
-.tab-bar-safe { height: 80rpx; }
+/* ====== 四维详解卡片增强 ====== */
+.dim-card { padding: 20rpx 24rpx; }
+
+.dim-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.dim-badge {
+  width: 72rpx;
+  height: 36rpx;
+  border-radius: 18rpx;
+  font-size: 20rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  text-align: center;
+  line-height: 36rpx;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.dim-badge-dir { background: linear-gradient(135deg, #0D8496, #0A6B7A); }
+.dim-badge-wave { background: linear-gradient(135deg, #3D8B5E, #2E6F47); }
+.dim-badge-swell { background: linear-gradient(135deg, #DC9018, #C07A10); }
+.dim-badge-tide { background: linear-gradient(135deg, #5C6BC0, #4552B0); }
+
+.dim-title {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #24292F;
+}
+
+.dim-desc {
+  color: #59616B;
+  line-height: 1.7;
+  display: block;
+  margin-bottom: 6rpx;
+}
+
+.dim-detail {
+  padding: 10rpx 14rpx;
+  background: rgba(13,132,150,0.04);
+  border-radius: 8rpx;
+  margin-top: 8rpx;
+}
+
+.dim-example-box {
+  padding: 10rpx 14rpx;
+  background: rgba(13,132,150,0.03);
+  border-radius: 8rpx;
+  margin-top: 6rpx;
+}
+
+.dim-example-title {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #0D8496;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+/* ====== 权重设计逻辑 ====== */
+.weight-explain {
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid rgba(0,0,0,0.03);
+}
+
+.weight-explain:last-child {
+  border-bottom: none;
+}
+
+/* ====== 打分流程 ====== */
+.flow-step {
+  display: flex;
+  padding: 14rpx 0;
+  border-bottom: 1rpx solid rgba(0,0,0,0.03);
+}
+
+.flow-step:last-child {
+  border-bottom: none;
+}
+
+.flow-num {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0D8496, #0A6B7A);
+  color: #FFFFFF;
+  font-size: 22rpx;
+  font-weight: 700;
+  text-align: center;
+  line-height: 44rpx;
+  flex-shrink: 0;
+  margin-right: 14rpx;
+}
+
+.flow-body {
+  flex: 1;
+  padding-top: 2rpx;
+}
+
+/* ====== 数据来源与参考依据 ====== */
+.ref-subtitle {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #24292F;
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.ref-body {
+  color: #59616B;
+  line-height: 1.8;
+  display: block;
+}
+
+.ref-link {
+  color: #0D8496;
+  font-weight: 500;
+}
+
+.ref-model-list {
+  margin-top: 16rpx;
+}
+
+.ref-model-item {
+  padding: 14rpx 0;
+  border-bottom: 1rpx solid rgba(0,0,0,0.04);
+}
+
+.ref-model-item:last-child {
+  border-bottom: none;
+}
+
+.ref-model-name {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #24292F;
+  margin-bottom: 6rpx;
+  display: block;
+}
+
+.ref-paper-list {
+  margin-top: 8rpx;
+}
+
+.ref-paper-item {
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid rgba(0,0,0,0.03);
+}
+
+.ref-paper-item:last-child {
+  border-bottom: none;
+}
+
+.ref-paper-title {
+  color: #24292F;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.ref-source-list {
+  margin-top: 12rpx;
+}
+
+.ref-source-item {
+  display: flex;
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid rgba(0,0,0,0.03);
+}
+
+.ref-source-item:last-child {
+  border-bottom: none;
+}
+
+.ref-bullet {
+  font-size: 24rpx;
+  color: #0D8496;
+  margin-right: 10rpx;
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+
+.ref-source-body {
+  flex: 1;
+}
+
+.ref-source-title {
+  color: #24292F;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 4rpx;
+}

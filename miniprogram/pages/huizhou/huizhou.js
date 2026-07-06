@@ -190,11 +190,11 @@ Page({
       var topSpots = summaries.slice(0, 3).map(function (r) {
         return {
           spotId: r.spotId, name: r.name, area: r.area, level: r.level,
-          bottom: r.bottom, tideNote: r.tideNote, overallTier: r.overallTier,
+          bottom: r.bottom, tideNote: r.tideNote,
+          stars: r.stars, starLabel: r.starLabel, starStr: r.starStr,
           bestScore: r.bestScore, timeRange: r.timeRange,
-          highHours: r.highHours, midHours: r.midHours,
           waveRange: waveRange, swellRange: swellRange, avgSeaLevel: r.avgSeaLevel,
-          dimScores: r.dimScores,
+          dimScores: r.dimScores, videoCid: r.videoCid,
         };
       });
 
@@ -217,6 +217,13 @@ Page({
   onShowRules: function () { wx.navigateTo({ url: '/pages/rules/rules' }); },
   onTopSpotTap: function (e) {
     wx.navigateTo({ url: '/pages/detail/detail?id=' + e.currentTarget.dataset.spotId });
+  },
+  onHeaderJump: function (e) {
+    var cid = e.currentTarget.dataset.cid;
+    wx.navigateToMiniProgram({
+      appId: 'wxef080ceb52a9699f',
+      path: 'pages/webview/index?cid=' + cid,
+    });
   },
   onShareAppMessage: function () { return { title: '双月湾浪点推荐', path: '/pages/huizhou/huizhou' }; },
 });

@@ -25,12 +25,12 @@
     <view class="section" wx:if="{{recSummary}}">
       <view class="flex-between mb-16">
         <text class="section-title">今日推荐</text>
-        <view class="tier-badge tier-{{recSummary.tierClass}}">{{recSummary.tier}}</view>
+        <view class="star-badge star-bg-{{recSummary.stars}}">{{recSummary.starStr}} {{recSummary.starLabel}}</view>
       </view>
 
       <view class="rec-score-hero">
-        <text class="rec-big-score">{{recSummary.bestScore}}</text>
-        <text class="text-xs text-secondary">分</text>
+        <text class="rec-big-stars star-c-{{recSummary.stars}}">{{recSummary.starStr}}</text>
+        <text class="rec-star-label">{{recSummary.starLabel}}</text>
       </view>
 
       <view class="rec-dims">
@@ -78,7 +78,7 @@
             <text class="h-td h-td-dir">{{item.wave_direction_cn || '--'}}</text>
             <text class="h-td h-td-temp">{{item.sea_temp_c || '--'}}°</text>
             <text class="h-td h-td-tide">{{item.sea_level_m ? item.sea_level_m + 'm' : '--'}}</text>
-            <text wx:if="{{item.recScore != null}}" class="h-td h-td-pts rec-score-{{item.recTier}}">{{item.recScore}}</text>
+            <text wx:if="{{item.recScore != null}}" class="h-td h-td-pts rec-score-s{{item.recStars}}">{{item.recScore}}</text>
             <text wx:else class="h-td h-td-pts text-secondary">--</text>
           </view>
         </scroll-view>
@@ -110,7 +110,7 @@
               <text class="h-td h-td-dir">{{item.wave_direction_cn || '--'}}</text>
               <text class="h-td h-td-temp">{{item.sea_temp_c || '--'}}°</text>
               <text class="h-td h-td-tide">{{item.sea_level_m ? item.sea_level_m + 'm' : '--'}}</text>
-              <text wx:if="{{item.recScore != null}}" class="h-td h-td-pts rec-score-{{item.recTier}}">{{item.recScore}}</text>
+              <text wx:if="{{item.recScore != null}}" class="h-td h-td-pts rec-score-s{{item.recStars}}">{{item.recScore}}</text>
               <text wx:else class="h-td h-td-pts text-secondary">--</text>
             </view>
           </view>

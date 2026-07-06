@@ -78,17 +78,15 @@ Page({
         var sorted = scored.slice().sort(function (a, b) { return b.totalScore - a.totalScore; });
         var bestScore = sorted.length > 0 ? sorted[0].totalScore : 0;
 
-        var tier = '低推荐';
-        var tierClass = 'low';
-        if (bestScore >= 80) { tier = '高推荐'; tierClass = 'high'; }
-        else if (bestScore >= 60) { tier = '中推荐'; tierClass = 'mid'; }
+        var stars = recommender.scoreToStars(bestScore);
 
         recSummary = {
           bestScore: bestScore,
-          tier: tier,
-          tierClass: tierClass,
+          stars: stars,
+          starLabel: recommender.STAR_LABELS[stars],
+          starStr: recommender.starString(stars),
           timeRange: recommender.mergeTimeRanges(
-            scored.filter(function (s) { return s.tier === 'high'; }).map(function (s) { return s.time; })
+            scored.filter(function (s) { return s.stars >= 4; }).map(function (s) { return s.time; })
           ),
           avgWaveH: today.wave_height_avg_m ? today.wave_height_avg_m.toFixed(1) : '--',
           avgSwell: today.swell_period_avg_s ? today.swell_period_avg_s.toFixed(1) : '--',
@@ -112,7 +110,7 @@ Page({
             sea_temp_c: h.sea_temp_c,
             sea_level_m: h.sea_level_m,
             recScore: s ? s.totalScore : null,
-            recTier: s ? s.tier : null,
+            recStars: s ? s.stars : null,
           };
         });
       } else {
@@ -127,7 +125,7 @@ Page({
             sea_temp_c: h.sea_temp_c,
             sea_level_m: h.sea_level_m,
             recScore: null,
-            recTier: null,
+            recStars: null,
           };
         });
       }
@@ -172,7 +170,7 @@ Page({
               sea_temp_c: h.sea_temp_c,
               sea_level_m: h.sea_level_m,
               recScore: s ? s.totalScore : null,
-              recTier: s ? s.tier : null,
+              recStars: s ? s.stars : null,
             };
           });
         } else {
@@ -186,7 +184,7 @@ Page({
               sea_temp_c: h.sea_temp_c,
               sea_level_m: h.sea_level_m,
               recScore: null,
-              recTier: null,
+              recStars: null,
             };
           });
         }
