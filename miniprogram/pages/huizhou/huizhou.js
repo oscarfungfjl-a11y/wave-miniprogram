@@ -185,7 +185,9 @@ Page({
         if (sp != null) { if (sMin === null || sp < sMin) sMin = sp; if (sMax === null || sp > sMax) sMax = sp; }
       }
       var waveRange = (wMin != null && wMax != null) ? wMin.toFixed(1) + 'm-' + wMax.toFixed(1) + 'm' : '--';
+      var waveRangeVal = (wMin != null && wMax != null) ? wMin.toFixed(1) + '-' + wMax.toFixed(1) : '--';
       var swellRange = (sMin != null && sMax != null) ? sMin.toFixed(1) + 's-' + sMax.toFixed(1) + 's' : '--';
+      var swellRangeVal = (sMin != null && sMax != null) ? sMin.toFixed(1) + '-' + sMax.toFixed(1) : '--';
 
       var topSpots = summaries.slice(0, 3).map(function (r) {
         return {
@@ -193,7 +195,9 @@ Page({
           bottom: r.bottom, tideNote: r.tideNote,
           stars: r.stars, starLabel: r.starLabel, starStr: r.starStr,
           bestScore: r.bestScore, timeRange: r.timeRange,
-          waveRange: waveRange, swellRange: swellRange, avgSeaLevel: r.avgSeaLevel,
+          waveRange: waveRange, waveRangeVal: waveRangeVal,
+          swellRange: swellRange, swellRangeVal: swellRangeVal,
+          avgSeaLevel: r.avgSeaLevel,
           dimScores: r.dimScores, videoCid: r.videoCid,
         };
       });

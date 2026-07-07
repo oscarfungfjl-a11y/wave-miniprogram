@@ -9,9 +9,9 @@
   >
     <t-icon
       name="{{item.icon}}"
-      size="44rpx"
-      color="{{selected === index ? '#0F6E56' : '#888780'}}"
+      size="48rpx"
+      color="{{selected === index ? '#378ADD' : '#9A9BAC'}}"
     />
-    <text class="tab-text">{{item.text}}</text>
+    <view class="tab-dot" wx:if="{{selected === index}}"></view>
   </view>
 </view>

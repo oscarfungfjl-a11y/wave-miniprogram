@@ -1,30 +1,35 @@
+/* ── 评分徽章组件 v3 ── */
+
 .rating-badge {
   display: inline-flex;
   align-items: center;
   gap: 6rpx;
-  padding: 6rpx 16rpx;
-  border-radius: 20rpx;
+  padding: 6rpx 18rpx;
+  border-radius: 999rpx;
   font-size: 22rpx;
-  font-weight: 600;
+  font-weight: 500;
 }
 
+/* 高推荐/推荐 → teal */
 .rating-excellent {
-  background: #1D9E75;
-  color: #FFFFFF;
+  background: rgba(29,158,117,0.12);
+  color: #0F6E56;
 }
 
+/* 中推荐 → amber */
 .rating-good {
-  background: #5DCAA5;
-  color: #085041;
+  background: rgba(186,117,23,0.12);
+  color: #854F0B;
 }
 
+/* 弱/不推荐 → gray */
 .rating-fair {
-  background: #EF9F27;
-  color: #FFFFFF;
+  background: rgba(136,135,128,0.12);
+  color: #5F5E5A;
 }
 
 .rating-poor {
-  background: #D3D1C7;
+  background: rgba(136,135,128,0.12);
   color: #5F5E5A;
 }
 

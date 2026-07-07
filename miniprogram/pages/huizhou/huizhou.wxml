@@ -58,54 +58,61 @@
     </view>
 
     <!-- 综合建议 -->
-    <view class="section" wx:if="{{advice}}">
-      <text class="section-title mb-12">{{dateLabel}}综合建议</text>
-      <view class="advice-box">
-        <text class="text-sm">{{advice}}</text>
-      </view>
+    <view class="advice-box" wx:if="{{advice}}">
+      <text class="section-title" style="display:block;margin-bottom:12rpx;">{{dateLabel}}综合建议</text>
+      <text class="text-sm">{{advice}}</text>
     </view>
 
     <!-- 推荐浪点 -->
-    <view class="section">
-      <view class="flex-between mb-16">
-        <view class="flex-row">
-          <text class="section-title">{{dateLabel}}推荐浪点</text>
-          <view class="rule-btn" bindtap="onShowRules">
-            <text class="rule-btn-text">?</text>
-          </view>
-        </view>
-        <text class="text-sm text-secondary">更新于 {{lastUpdate}}</text>
-      </view>
-
-      <!-- 推荐浪点卡片 -->
-      <view wx:if="{{topSpots.length > 0}}">
-        <view class="top-card" wx:for="{{topSpots}}" wx:key="spotId" bindtap="onTopSpotTap" data-spot-id="{{item.spotId}}">
-          <view class="top-card-header" catchtap="onHeaderJump" data-cid="{{item.videoCid}}">
-            <text class="top-spot-name">{{item.name}}</text>
-            <text class="top-spot-area text-sm ml-12">（{{item.area}}）</text>
-            <view class="star-badge star-bg-{{item.stars}} text-sm">
-              {{item.starLabel}}
+    <view wx:if="{{topSpots.length > 0}}">
+      <!-- 标题栏 -->
+      <view class="list-header">
+        <view class="list-header-row">
+          <view class="list-header-left">
+            <text class="section-title">{{dateLabel}}推荐浪点</text>
+            <view class="rule-btn" catchtap="onShowRules">
+              <text class="rule-btn-text">?</text>
             </view>
           </view>
-          <view class="top-card-body">
-            <view class="top-score-row">
-              <text class="top-big-stars star-c-{{item.stars}}">{{item.starStr}}</text>
-            </view>
-            <view class="top-row">
-              <text class="top-label">浪高</text><text class="top-val">{{item.waveRange}}</text>
-              <text class="top-label">周期</text><text class="top-val">{{item.swellRange}}</text>
-              <text class="top-label">潮高</text><text class="top-val">{{item.avgSeaLevel}}m</text>
-            </view>
-            <view class="top-time">
-              <text class="text-xs text-secondary">最佳时段：{{item.timeRange}}</text>
-            </view>
-          </view>
+          <text class="list-header-update">更新于 {{lastUpdate}}</text>
         </view>
       </view>
 
-      <view wx:else>
-        <t-empty icon="info-circle" description="暂未匹配到合适的推荐" />
+      <!-- 浪点卡片 -->
+      <view class="top-card" wx:for="{{topSpots}}" wx:key="spotId" bindtap="onTopSpotTap" data-spot-id="{{item.spotId}}">
+        <view class="top-card-header" catchtap="onHeaderJump" data-cid="{{item.videoCid}}">
+          <text class="top-spot-name">{{item.name}}</text>
+          <text class="top-spot-area text-sm ml-12">（{{item.area}}）</text>
+          <view class="star-badge star-bg-{{item.stars}} text-sm">
+            {{item.starLabel}}
+          </view>
+        </view>
+        <view class="top-card-body">
+          <view class="top-score-row">
+            <text class="top-big-stars">{{item.starStr}}</text>
+          </view>
+          <view class="top-row">
+            <view class="metric-col metric-col-wave">
+              <text class="metric-label">浪高（m）</text>
+              <text class="metric-val metric-val-wave">{{item.waveRangeVal}}</text>
+            </view>
+            <view class="metric-col metric-col-swell">
+              <text class="metric-label">周期（s）</text>
+              <text class="metric-val metric-val-swell">{{item.swellRangeVal}}</text>
+            </view>
+            <view class="metric-col metric-col-tide">
+              <text class="metric-label">潮高（m）</text>
+              <text class="metric-val metric-val-tide">{{item.avgSeaLevel}}</text>
+            </view>
+          </view>
+          <view class="top-time">
+            <text class="text-xs">最佳时段：{{item.timeRange}}</text>
+          </view>
+        </view>
       </view>
+    </view>
+    <view wx:else>
+      <t-empty icon="info-circle" description="暂未匹配到合适的推荐" />
     </view>
   </block>
 

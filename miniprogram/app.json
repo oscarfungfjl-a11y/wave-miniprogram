@@ -6,16 +6,16 @@
     "pages/rules/rules"
   ],
   "window": {
-    "navigationBarBackgroundColor": "#0D8496",
+    "navigationBarBackgroundColor": "#378ADD",
     "navigationBarTitleText": "浪报",
     "navigationBarTextStyle": "white",
-    "backgroundColor": "#F5F8FA"
+    "backgroundColor": "#EFF5FC"
   },
   "tabBar": {
     "custom": true,
-    "color": "#9BA5AF",
-    "selectedColor": "#0D8496",
-    "backgroundColor": "rgba(255,255,255,0.88)",
+    "color": "#9A9BAC",
+    "selectedColor": "#378ADD",
+    "backgroundColor": "rgba(255,255,255,0.9)",
     "borderStyle": "white",
     "list": [
       { "pagePath": "pages/huizhou/huizhou", "text": "首页" },

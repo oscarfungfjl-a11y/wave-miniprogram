@@ -1,4 +1,5 @@
 /* ── 日期筛选器 ── */
+/* 设计规范：72rpx高、999rpx胶囊圆角、间距16rpx */
 .date-filter {
   display: flex;
   align-items: center;
@@ -8,39 +9,43 @@
 
 .date-chips {
   display: flex;
-  gap: 12rpx;
+  gap: 16rpx;
   flex: 1;
   overflow-x: auto;
 }
 
 .chip {
   flex-shrink: 0;
-  padding: 10rpx 22rpx;
-  border-radius: 24rpx;
+  height: 72rpx;
+  padding: 0 32rpx;
+  border-radius: 999rpx;
   font-size: 26rpx;
-  font-weight: 500;
-  color: #59616B;
-  background: rgba(255,255,255,0.72);
-  border: 1px solid rgba(0,0,0,0.08);
+  font-weight: 400;
+  color: #5A6B7C;
+  background: rgba(255,255,255,0.6);
+  border: 1rpx solid rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
   transition: all 0.2s ease;
 }
 
 .chip-active {
   color: #FFFFFF;
-  background: #0D8496;
-  border-color: #0D8496;
+  font-weight: 500;
+  background: #378ADD;
+  border-color: #378ADD;
 }
 
 .chip-picker {
   width: 52rpx;
   height: 52rpx;
   padding: 0;
+  border-radius: 50%;
+  font-size: 22rpx;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  font-size: 24rpx;
-  flex-shrink: 0;
 }
 
 /* ── 日历弹窗 ── */
@@ -56,10 +61,13 @@
 
 .cal-popup {
   width: 620rpx;
-  background: #FFFFFF;
-  border-radius: 24rpx;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 56rpx;
   padding: 32rpx 24rpx 28rpx;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+  border: 1rpx solid rgba(26,43,60,0.06);
+  box-shadow: 0 8rpx 40rpx rgba(0,0,0,0.12);
 }
 
 .cal-hd {
@@ -71,13 +79,13 @@
 
 .cal-title {
   font-size: 32rpx;
-  font-weight: 700;
-  color: #24292F;
+  font-weight: 500;
+  color: #1A2B3C;
 }
 
 .cal-arrow {
   font-size: 28rpx;
-  color: #0D8496;
+  color: #378ADD;
   padding: 8rpx 16rpx;
 }
 
@@ -90,15 +98,11 @@
   flex: 1;
   text-align: center;
   font-size: 22rpx;
-  color: #9BA5AF;
-  font-weight: 600;
+  color: #8A9BAC;
+  font-weight: 500;
 }
 
-.cal-grid {}
-
-.cal-row {
-  display: flex;
-}
+.cal-row { display: flex; }
 
 .cal-day {
   flex: 1;
@@ -107,7 +111,7 @@
   align-items: center;
   justify-content: center;
   font-size: 28rpx;
-  color: #24292F;
+  color: #1A2B3C;
   border-radius: 12rpx;
   margin: 2rpx;
 }
@@ -115,130 +119,238 @@
 .cal-empty { background: transparent; }
 
 .cal-today {
-  font-weight: 700;
-  color: #0D8496;
+  font-weight: 500;
+  color: #378ADD;
 }
 
 .cal-sel {
-  background: #0D8496;
+  background: #378ADD;
   color: #FFFFFF;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .cal-disabled {
-  color: #DEE4EA;
+  color: #D0D5DD;
   pointer-events: none;
 }
 
-/* 综合建议 */
+/* ── 综合建议 ── */
+/* 设计规范：玻璃卡 + 56rpx圆角 */
 .advice-box {
-  padding: 24rpx;
-  border-radius: 16rpx;
-  border-left: 6rpx solid #DC9018;
+  margin: 0 24rpx 16rpx;
+  padding: 36rpx 40rpx;
+  border-radius: 56rpx;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1rpx solid rgba(26,43,60,0.08);
+  box-shadow: 0 4rpx 24rpx rgba(26,43,60,0.05);
   line-height: 1.7;
-  background: rgba(255,255,255,0.78);
-  border: 1px solid rgba(255,255,255,0.55);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.03);
 }
 
-/* 推荐浪点卡片 */
+.advice-box .text-sm {
+  font-size: 24rpx;
+  font-weight: 400;
+  color: #5A6B7C;
+}
+
+.mb-12 { margin-bottom: 12rpx; }
+
+/* ── 推荐浪点区域 ── */
+.ml-12 { margin-left: 12rpx; }
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #1A2B3C;
+  letter-spacing: -0.01em;
+}
+
+/* ── 第一张卡片顶部标题栏 ── */
+.list-header {
+  padding: 0 36rpx 16rpx;
+}
+
+.list-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.list-header-left {
+  display: flex;
+  align-items: center;
+}
+
+.rule-btn {
+  margin-left: 12rpx;
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  border: 2rpx solid #8A9BAC;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rule-btn-text {
+  font-size: 20rpx;
+  font-weight: 500;
+  color: #8A9BAC;
+  line-height: 1;
+}
+
+.list-header-update {
+  font-size: 22rpx;
+  color: #8A9BAC;
+}
+
+/* ── 推荐浪点卡片 ── */
+/* 设计规范：玻璃卡 + 56rpx圆角 + 细边框 */
 .top-card {
-  margin-bottom: 16rpx;
-  border-radius: 20rpx;
-  background: rgba(255,255,255,0.82);
-  border: 1px solid rgba(255,255,255,0.6);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.03);
+  margin: 0 24rpx 24rpx;
+  border-radius: 56rpx;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1rpx solid rgba(26,43,60,0.08);
+  box-shadow: 0 4rpx 24rpx rgba(26,43,60,0.05);
   overflow: hidden;
 }
 
 .top-card-header {
   display: flex;
   align-items: center;
-  padding: 18rpx 24rpx;
-  background: linear-gradient(135deg, #E8F5F8, #D4EEF3);
+  padding: 36rpx 44rpx 12rpx;
 }
 
 .top-spot-name {
-  font-size: 30rpx;
-  font-weight: 600;
-  color: #24292F;
+  font-size: 34rpx;
+  font-weight: 500;
+  color: #1A2B3C;
 }
 
-.top-spot-area { color: #9BA5AF; }
+.top-spot-area {
+  font-size: 24rpx;
+  color: #8A9BAC;
+}
 
+/* ── 推荐 tag ── */
+/* 设计规范：底色12%透明度 + 深层文字色 */
 .star-badge {
   margin-left: auto;
-  padding: 4rpx 14rpx;
-  border-radius: 20rpx;
-  font-weight: 600;
+  padding: 6rpx 18rpx;
+  border-radius: 999rpx;
+  font-weight: 500;
   font-size: 22rpx;
   letter-spacing: 0.03em;
 }
 
-/* 徽章背景色 */
-.star-bg-5 { background: #3D8B5E; color: #FFFFFF; }
-.star-bg-4 { background: #0D8496; color: #FFFFFF; }
-.star-bg-3 { background: #DC9018; color: #FFFFFF; }
-.star-bg-2 { background: #E07B3B; color: #FFFFFF; }
-.star-bg-1 { background: #CD4035; color: #FFFFFF; }
+/* 高推荐 (5★) → teal */
+.star-bg-5 {
+  background: rgba(29,158,117,0.12);
+  color: #0F6E56;
+}
+/* 推荐 (4★) → teal */
+.star-bg-4 {
+  background: rgba(29,158,117,0.12);
+  color: #0F6E56;
+}
+/* 中推荐 (3★) → amber */
+.star-bg-3 {
+  background: rgba(186,117,23,0.12);
+  color: #854F0B;
+}
+/* 弱 (2★) → gray */
+.star-bg-2 {
+  background: rgba(136,135,128,0.12);
+  color: #5F5E5A;
+}
+/* 弱 (1★) → gray */
+.star-bg-1 {
+  background: rgba(136,135,128,0.12);
+  color: #5F5E5A;
+}
 
-/* 文字色 */
-.star-c-5 { color: #3D8B5E; }
-.star-c-4 { color: #0D8496; }
-.star-c-3 { color: #DC9018; }
-.star-c-2 { color: #E07B3B; }
-.star-c-1 { color: #CD4035; }
+/* ── 卡片 body ── */
+.top-card-body {
+  padding: 0 44rpx 36rpx;
+}
 
-.top-card-body { padding: 18rpx 24rpx; }
-
+/* ── 星级展示 ── */
+/* 设计规范：绿色星 #1D9E75、36rpx、8rpx间距 */
 .top-score-row {
-  display: flex;
-  align-items: baseline;
-  margin-bottom: 16rpx;
+  margin-bottom: 24rpx;
 }
 
 .top-big-stars {
-  font-size: 48rpx;
-  font-weight: 700;
+  font-size: 32rpx;
+  font-weight: 400;
   line-height: 1;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
+  color: #1D9E75;
 }
 
-.top-star-label {
-  font-size: 28rpx;
-  font-weight: 600;
-  margin-left: 12rpx;
-  color: #59616B;
+/* ── 三栏分列卡 metric-row ── */
+/* 设计规范：32rpx圆角子卡、24rpx padding、40rpx/500数值 */
+.top-row {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 24rpx;
+  padding: 0;
+  background: none;
 }
 
-.top-dims { display: flex; gap: 8rpx; margin-bottom: 16rpx; }
-
-.top-dim-item {
+.metric-col {
   flex: 1;
+  padding: 20rpx 12rpx;
+  border-radius: 32rpx;
   text-align: center;
-  padding: 12rpx 4rpx;
-  background: rgba(13,132,150,0.06);
-  border-radius: 10rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6rpx;
 }
 
-.top-dim-label { display: block; font-size: 20rpx; color: #9BA5AF; margin-bottom: 2rpx; }
-.top-dim-val { display: block; font-size: 22rpx; font-weight: 600; color: #0D8496; }
-
-.top-row { display: flex; align-items: center; gap: 8rpx; }
-.top-label { font-size: 22rpx; color: #9BA5AF; min-width: 56rpx; }
-.top-val { font-size: 24rpx; font-weight: 600; color: #24292F; margin-right: 16rpx; }
-
-.top-time { margin-top: 14rpx; padding-top: 14rpx; border-top: 1px solid rgba(0,0,0,0.05); }
-
-.rule-btn {
-  margin-left: 12rpx;
-  width: 40rpx; height: 40rpx;
-  border-radius: 50%;
-  border: 2rpx solid #0D8496;
-  display: flex; align-items: center; justify-content: center;
+.metric-col-wave {
+  background: #E6F1FB;
 }
 
-.rule-btn-text { font-size: 22rpx; font-weight: 700; color: #0D8496; line-height: 1; }
+.metric-col-swell {
+  background: #E1F5EE;
+}
 
-.flex-row { display: flex; align-items: center; }
+.metric-col-tide {
+  background: #EEEDFE;
+}
+
+.metric-label {
+  font-size: 20rpx;
+  font-weight: 400;
+  color: #8A9BAC;
+}
+
+.metric-val {
+  font-size: 34rpx;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.metric-val-wave { color: #378ADD; }
+.metric-val-swell { color: #1D9E75; }
+.metric-val-tide { color: #534AB7; }
+
+/* ── 最佳时段 ── */
+.top-time {
+  padding-top: 16rpx;
+  border-top: 1rpx solid rgba(0,0,0,0.04);
+}
+
+.top-time .text-xs {
+  font-size: 22rpx;
+  font-weight: 500;
+  color: #378ADD;
+}
+
+/* 旧有重复的工具类 (在全局已定义) — 兼容本地覆盖 */
 .mt-8 { margin-top: 8rpx; }

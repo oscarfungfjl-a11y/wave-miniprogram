@@ -2,8 +2,8 @@ Component({
   data: {
     selected: 0,
     list: [
-      { pagePath: '/pages/huizhou/huizhou', text: '首页', icon: 'location' },
-      { pagePath: '/pages/spots/spots', text: '浪点', icon: 'search' },
+      { pagePath: '/pages/huizhou/huizhou', icon: 'home' },
+      { pagePath: '/pages/spots/spots', icon: 'search' },
     ],
   },
 

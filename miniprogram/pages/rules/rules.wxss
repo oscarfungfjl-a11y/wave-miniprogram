@@ -8,33 +8,35 @@
 }
 
 .section-title {
-  font-size: 32rpx;
-  font-weight: 700;
-  color: #24292F;
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #1A2B3C;
   margin-bottom: 16rpx;
   display: block;
 }
 
 .card {
-  padding: 24rpx;
-  background: rgba(255,255,255,0.78);
-  border-radius: 16rpx;
-  border: 1px solid rgba(255,255,255,0.55);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+  padding: 28rpx;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 56rpx;
+  border: 1rpx solid rgba(26,43,60,0.08);
+  box-shadow: 0 4rpx 24rpx rgba(26,43,60,0.05);
 }
 
 .formula-box {
   padding: 24rpx;
-  background: rgba(13,132,150,0.06);
+  background: rgba(55,138,221,0.06);
   border-radius: 10rpx;
   margin-bottom: 20rpx;
-  border-left: 6rpx solid #0D8496;
+  border-left: 6rpx solid #378ADD;
 }
 
 .formula-text {
   font-size: 26rpx;
-  font-weight: 600;
-  color: #0D8496;
+  font-weight: 500;
+  color: #378ADD;
   line-height: 1.8;
 }
 
@@ -46,26 +48,26 @@
 
 .star-tier {
   font-size: 28rpx;
-  font-weight: 700;
+  font-weight: 500;
   margin-right: 12rpx;
   letter-spacing: 0.02em;
   min-width: 160rpx;
 }
 
-.star-tier-5 { color: #3D8B5E; }
-.star-tier-4 { color: #0D8496; }
-.star-tier-3 { color: #DC9018; }
-.star-tier-2 { color: #E07B3B; }
-.star-tier-1 { color: #CD4035; }
+.star-tier-5 { color: #1D9E75; }
+.star-tier-4 { color: #1D9E75; }
+.star-tier-3 { color: #BA7517; }
+.star-tier-2 { color: #888780; }
+.star-tier-1 { color: #888780; }
 
 .tier-desc {
   font-size: 26rpx;
-  color: #59616B;
+  color: #5A6B7C;
 }
 
 .note-box {
   padding: 12rpx;
-  background: rgba(13,132,150,0.04);
+  background: rgba(55,138,221,0.04);
   border-radius: 8rpx;
 }
 
@@ -74,24 +76,22 @@
   border-bottom: 1rpx solid rgba(0,0,0,0.04);
 }
 
-.dim-item:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
+.dim-item:last-child { border-bottom: none; padding-bottom: 0; }
 
 .dim-label {
   font-size: 28rpx;
-  font-weight: 600;
-  color: #24292F;
+  font-weight: 500;
+  color: #1A2B3C;
   margin-bottom: 8rpx;
   display: block;
 }
 
 .spot-rule-card {
   margin-bottom: 16rpx;
-  border-radius: 16rpx;
-  background: rgba(255,255,255,0.78);
-  border: 1px solid rgba(13,132,150,0.12);
+  border-radius: 56rpx;
+  background: rgba(255,255,255,0.88);
+  border: 1rpx solid rgba(55,138,221,0.12);
+  box-shadow: 0 4rpx 24rpx rgba(26,43,60,0.05);
   overflow: hidden;
 }
 
@@ -99,22 +99,18 @@
   display: flex;
   align-items: center;
   padding: 16rpx 20rpx;
-  background: linear-gradient(135deg, #E8F5F8, #D4EEF3);
+  background: linear-gradient(135deg, #E6F1FB, #D4E6F8);
 }
 
 .spot-rule-name {
   font-size: 28rpx;
-  font-weight: 600;
-  color: #0D8496;
+  font-weight: 500;
+  color: #378ADD;
 }
 
-.spot-rule-area {
-  color: #9BA5AF;
-}
+.spot-rule-area { color: #8A9BAC; }
 
-.spot-rule-body {
-  padding: 16rpx 20rpx;
-}
+.spot-rule-body { padding: 16rpx 20rpx; }
 
 .info-row {
   display: flex;
@@ -122,28 +118,27 @@
   border-bottom: 1rpx solid rgba(0,0,0,0.03);
 }
 
-.info-row:last-child {
-  border-bottom: none;
-}
+.info-row:last-child { border-bottom: none; }
 
 .info-label {
   font-size: 24rpx;
-  color: #9BA5AF;
+  color: #8A9BAC;
   min-width: 120rpx;
   flex-shrink: 0;
 }
 
 .info-val {
   font-size: 24rpx;
-  color: #24292F;
+  color: #1A2B3C;
   line-height: 1.5;
 }
 
 .text-xs { font-size: 22rpx; }
 .text-sm { font-size: 24rpx; }
-.text-secondary { color: #9BA5AF; }
+.text-secondary { color: #8A9BAC; }
 .mt-16 { margin-top: 16rpx; }
-/* ====== 四维详解卡片增强 ====== */
+
+/* ── 四维详解卡片增强 ── */
 .dim-card { padding: 20rpx 24rpx; }
 
 .dim-header {
@@ -157,7 +152,7 @@
   height: 36rpx;
   border-radius: 18rpx;
   font-size: 20rpx;
-  font-weight: 700;
+  font-weight: 500;
   color: #FFFFFF;
   text-align: center;
   line-height: 36rpx;
@@ -165,19 +160,19 @@
   flex-shrink: 0;
 }
 
-.dim-badge-dir { background: linear-gradient(135deg, #0D8496, #0A6B7A); }
-.dim-badge-wave { background: linear-gradient(135deg, #3D8B5E, #2E6F47); }
-.dim-badge-swell { background: linear-gradient(135deg, #DC9018, #C07A10); }
-.dim-badge-tide { background: linear-gradient(135deg, #5C6BC0, #4552B0); }
+.dim-badge-dir { background: linear-gradient(135deg, #378ADD, #1A5FA8); }
+.dim-badge-wave { background: linear-gradient(135deg, #1D9E75, #15785A); }
+.dim-badge-swell { background: linear-gradient(135deg, #BA7517, #9E6412); }
+.dim-badge-tide { background: linear-gradient(135deg, #534AB7, #4139A0); }
 
 .dim-title {
   font-size: 26rpx;
-  font-weight: 700;
-  color: #24292F;
+  font-weight: 500;
+  color: #1A2B3C;
 }
 
 .dim-desc {
-  color: #59616B;
+  color: #5A6B7C;
   line-height: 1.7;
   display: block;
   margin-bottom: 6rpx;
@@ -185,130 +180,104 @@
 
 .dim-detail {
   padding: 10rpx 14rpx;
-  background: rgba(13,132,150,0.04);
+  background: rgba(55,138,221,0.04);
   border-radius: 8rpx;
   margin-top: 8rpx;
 }
 
 .dim-example-box {
   padding: 10rpx 14rpx;
-  background: rgba(13,132,150,0.03);
+  background: rgba(55,138,221,0.03);
   border-radius: 8rpx;
   margin-top: 6rpx;
 }
 
 .dim-example-title {
   font-size: 22rpx;
-  font-weight: 600;
-  color: #0D8496;
+  font-weight: 500;
+  color: #378ADD;
   display: block;
   margin-bottom: 4rpx;
 }
 
-/* ====== 权重设计逻辑 ====== */
+/* ── 权重设计逻辑 ── */
 .weight-explain {
   padding: 12rpx 0;
   border-bottom: 1rpx solid rgba(0,0,0,0.03);
 }
 
-.weight-explain:last-child {
-  border-bottom: none;
-}
+.weight-explain:last-child { border-bottom: none; }
 
-/* ====== 打分流程 ====== */
+/* ── 打分流程 ── */
 .flow-step {
   display: flex;
   padding: 14rpx 0;
   border-bottom: 1rpx solid rgba(0,0,0,0.03);
 }
 
-.flow-step:last-child {
-  border-bottom: none;
-}
+.flow-step:last-child { border-bottom: none; }
 
 .flow-num {
   width: 44rpx;
   height: 44rpx;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0D8496, #0A6B7A);
+  background: linear-gradient(135deg, #378ADD, #1A5FA8);
   color: #FFFFFF;
   font-size: 22rpx;
-  font-weight: 700;
+  font-weight: 500;
   text-align: center;
   line-height: 44rpx;
   flex-shrink: 0;
   margin-right: 14rpx;
 }
 
-.flow-body {
-  flex: 1;
-  padding-top: 2rpx;
-}
+.flow-body { flex: 1; padding-top: 2rpx; }
 
-/* ====== 数据来源与参考依据 ====== */
+/* ── 数据来源与参考依据 ── */
 .ref-subtitle {
   font-size: 28rpx;
-  font-weight: 700;
-  color: #24292F;
+  font-weight: 500;
+  color: #1A2B3C;
   margin-bottom: 16rpx;
   display: block;
 }
 
-.ref-body {
-  color: #59616B;
-  line-height: 1.8;
-  display: block;
-}
-
-.ref-link {
-  color: #0D8496;
-  font-weight: 500;
-}
-
-.ref-model-list {
-  margin-top: 16rpx;
-}
+.ref-body { color: #5A6B7C; line-height: 1.8; display: block; }
+.ref-link { color: #378ADD; font-weight: 500; }
+.ref-model-list { margin-top: 16rpx; }
 
 .ref-model-item {
   padding: 14rpx 0;
   border-bottom: 1rpx solid rgba(0,0,0,0.04);
 }
 
-.ref-model-item:last-child {
-  border-bottom: none;
-}
+.ref-model-item:last-child { border-bottom: none; }
 
 .ref-model-name {
   font-size: 26rpx;
-  font-weight: 600;
-  color: #24292F;
+  font-weight: 500;
+  color: #1A2B3C;
   margin-bottom: 6rpx;
   display: block;
 }
 
-.ref-paper-list {
-  margin-top: 8rpx;
-}
+.ref-paper-list { margin-top: 8rpx; }
 
 .ref-paper-item {
   padding: 12rpx 0;
   border-bottom: 1rpx solid rgba(0,0,0,0.03);
 }
 
-.ref-paper-item:last-child {
-  border-bottom: none;
-}
+.ref-paper-item:last-child { border-bottom: none; }
 
 .ref-paper-title {
-  color: #24292F;
+  color: #1A2B3C;
   font-weight: 500;
   display: block;
   margin-bottom: 4rpx;
 }
 
-.ref-source-list {
-  margin-top: 12rpx;
-}
+.ref-source-list { margin-top: 12rpx; }
 
 .ref-source-item {
   display: flex;
@@ -316,24 +285,20 @@
   border-bottom: 1rpx solid rgba(0,0,0,0.03);
 }
 
-.ref-source-item:last-child {
-  border-bottom: none;
-}
+.ref-source-item:last-child { border-bottom: none; }
 
 .ref-bullet {
   font-size: 24rpx;
-  color: #0D8496;
+  color: #378ADD;
   margin-right: 10rpx;
   line-height: 1.6;
   flex-shrink: 0;
 }
 
-.ref-source-body {
-  flex: 1;
-}
+.ref-source-body { flex: 1; }
 
 .ref-source-title {
-  color: #24292F;
+  color: #1A2B3C;
   font-weight: 500;
   display: block;
   margin-bottom: 4rpx;

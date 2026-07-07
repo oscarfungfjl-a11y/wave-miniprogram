@@ -25,11 +25,11 @@
     <view class="section" wx:if="{{recSummary}}">
       <view class="flex-between mb-16">
         <text class="section-title">今日推荐</text>
-        <view class="star-badge star-bg-{{recSummary.stars}}">{{recSummary.starStr}} {{recSummary.starLabel}}</view>
+        <view class="star-badge star-bg-{{recSummary.stars}}">{{recSummary.starLabel}}</view>
       </view>
 
       <view class="rec-score-hero">
-        <text class="rec-big-stars star-c-{{recSummary.stars}}">{{recSummary.starStr}}</text>
+        <text class="rec-big-stars">{{recSummary.starStr}}</text>
         <text class="rec-star-label">{{recSummary.starLabel}}</text>
       </view>
 

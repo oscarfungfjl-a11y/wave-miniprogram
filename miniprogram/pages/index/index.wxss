@@ -1,9 +1,10 @@
 /**
- * 首页样式
+ * 首页样式 v3
  */
+
 .header-banner {
   position: relative;
-  background: linear-gradient(135deg, #0F6E56 0%, #1D9E75 100%);
+  background: linear-gradient(135deg, #378ADD 0%, #5CAAED 100%);
   padding: 40rpx 32rpx 32rpx;
   overflow: hidden;
 }
@@ -15,7 +16,7 @@
 
 .greeting {
   font-size: 36rpx;
-  font-weight: 600;
+  font-weight: 500;
   color: #FFFFFF;
 }
 
@@ -56,8 +57,8 @@
   align-items: center;
   gap: 8rpx;
   padding: 8rpx 16rpx;
-  border-radius: 20rpx;
-  background: rgba(15, 110, 86, 0.06);
+  border-radius: 999rpx;
+  background: rgba(55,138,221,0.06);
 }
 
 .recommend-list {
