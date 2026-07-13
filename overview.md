@@ -34,7 +34,7 @@ backend/
 ## 后端一键启动
 
 ```bash
-# 在 wave-app/backend/ 下：
+# 在 trae-wave-miniprogram/backend/ 下：
 cp .env.example .env          # 复制配置（默认值即可用）
 docker-compose up -d           # 启动 PostgreSQL + Redis
 python -m venv venv && source venv/bin/activate

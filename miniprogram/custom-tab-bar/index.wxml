@@ -7,11 +7,12 @@
     data-path="{{item.pagePath}}"
     bindtap="switchTab"
   >
-    <t-icon
-      name="{{item.icon}}"
-      size="48rpx"
-      color="{{selected === index ? '#378ADD' : '#9A9BAC'}}"
-    />
-    <view class="tab-dot" wx:if="{{selected === index}}"></view>
+    <view class="tab-highlight">
+      <t-icon
+        name="{{item.icon}}"
+        size="40rpx"
+        color="{{selected === index ? '#378ADD' : '#9A9BAC'}}"
+      />
+    </view>
   </view>
 </view>

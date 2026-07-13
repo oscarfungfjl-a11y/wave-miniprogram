@@ -23,8 +23,5 @@
     ]
   },
   "sitemapLocation": "sitemap.json",
-  "lazyCodeLoading": "requiredComponents",
-  "navigateToMiniProgramAppIdList": [
-    "wxef080ceb52a9699f"
-  ]
+  "lazyCodeLoading": "requiredComponents"
 }

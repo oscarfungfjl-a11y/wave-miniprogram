@@ -11,6 +11,8 @@ App({
     systemInfo: null,
     // 用户关注的浪点ID集合（快速查找用）
     favoriteSpotIds: [],
+    // 开发模式开关：设为 true 可跳过登录（用于无后端预览）
+    skipAuth: true,
   },
 
   onLaunch(options) {
@@ -20,7 +22,10 @@ App({
     this.globalData.navBarHeight = statusBarHeight + 44;
 
     // 检查登录态
-    this.initAuth();
+    // 开发模式：未配置后端时跳过登录，避免请求 localhost:8000 报错
+    if (!this.globalData.skipAuth) {
+      this.initAuth();
+    }
 
     // 获取用户信息（需用户授权）
     this.getUserProfile();
@@ -28,7 +33,7 @@ App({
 
   onShow(options) {
     // 从后台切回前台时刷新登录态
-    if (this.globalData.token) {
+    if (!this.globalData.skipAuth && this.globalData.token) {
       checkSession().catch(() => {
         this.initAuth();
       });

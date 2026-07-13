@@ -15,6 +15,29 @@
   </view>
 
   <block wx:else>
+    <!-- 综合建议推荐 -->
+    <view class="advice-box">
+      <text class="section-title" style="display:block;margin-bottom:16rpx;">冲浪建议</text>
+      
+      <!-- 今天冲浪建议 -->
+      <view class="advice-section">
+        <text class="advice-section-title">今天冲浪建议</text>
+        <text class="text-sm advice-content">{{todayAdvice || '暂无建议'}}</text>
+      </view>
+
+      <!-- 未来7天冲浪建议 -->
+      <view class="advice-section" wx:if="{{weekRecommendations.length > 0}}">
+        <text class="advice-section-title">未来7天最佳日期</text>
+        <view class="week-recs">
+          <view class="week-rec-item" wx:for="{{weekRecommendations}}" wx:key="date" bindtap="onWeekRecTap" data-date="{{item.date}}">
+            <text class="week-rec-weekday">{{item.weekday}}</text>
+            <text class="week-rec-date">{{item.dateLabel}}</text>
+            <text class="week-rec-score">{{item.scoreLabel}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
     <!-- 日期筛选 -->
     <view class="date-filter">
       <view class="date-chips">
@@ -55,12 +78,6 @@
           </view>
         </view>
       </view>
-    </view>
-
-    <!-- 综合建议 -->
-    <view class="advice-box" wx:if="{{advice}}">
-      <text class="section-title" style="display:block;margin-bottom:12rpx;">{{dateLabel}}综合建议</text>
-      <text class="text-sm">{{advice}}</text>
     </view>
 
     <!-- 推荐浪点 -->

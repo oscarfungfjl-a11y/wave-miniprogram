@@ -36,16 +36,18 @@ page {
 .section {
   margin: 24rpx;
   padding: 28rpx;
-  background: rgba(255,255,255,0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255,255,255,0.78);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
   border-radius: 56rpx;
-  border: 1rpx solid rgba(26,43,60,0.08);
-  box-shadow: 0 4rpx 24rpx rgba(26,43,60,0.05);
+  border: 1rpx solid rgba(255,255,255,0.6);
+  box-shadow:
+    0 8rpx 32rpx rgba(26,43,60,0.08),
+    inset 0 1rpx 0 rgba(255,255,255,0.7);
 }
 
 /* 安卓 fallback：不支持 backdrop-filter 时增加不透明度 */
-@supports not (backdrop-filter: blur(20px)) {
+@supports not (backdrop-filter: blur(40px)) {
   .section {
     background: rgba(255,255,255,0.94);
   }

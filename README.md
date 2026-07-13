@@ -22,7 +22,7 @@
 ## 项目结构
 
 ```
-wave-app/
+trae-wave-miniprogram/
 ├── miniprogram/               # 小程序前端
 │   ├── app.js / .json / .wxss # 全局入口 & 样式
 │   ├── pages/
@@ -46,8 +46,8 @@ wave-app/
 ### 1. 克隆项目
 
 ```bash
-git clone https://github.com/oscarfungfjl-a11y/wave-miniprogram.git
-cd wave-miniprogram
+git clone https://github.com/oscarfungfjl-a11y/trae-wave-miniprogram.git
+cd trae-wave-miniprogram
 ```
 
 ### 2. 安装依赖

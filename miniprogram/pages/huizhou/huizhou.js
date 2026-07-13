@@ -71,15 +71,17 @@ function buildCalendarMatrix(year, month) {
 
 Page({
   data: {
-    loading: true, errorMsg: '', advice: '',
+    loading: true, errorMsg: '',
+    todayAdvice: '',
+    weekRecommendations: [],
     todayWaveH: '', todaySwell: '', todayTemp: '',
     topSpots: [], lastUpdate: '',
     dateChips: [], selectedDate: '', dateLabel: '', pickerEnd: '',
-    // 日历弹窗
     showCalendar: false,
     calYear: 0, calMonth: 0,
     calMinDate: '', calMaxDate: '',
     calMatrix: [],
+    _allDailyData: [],
   },
 
   onLoad: function () {
@@ -109,6 +111,18 @@ Page({
 
   onPullDownRefresh: function () { this.loadData(this.data.selectedDate); },
 
+  /* ── 点击未来7天推荐项 ── */
+  onWeekRecTap: function (e) {
+    var dateStr = e.currentTarget.dataset.date;
+    if (!dateStr) return;
+    var chips = this.data.dateChips;
+    for (var i = 0; i < chips.length; i++) chips[i].active = false;
+    this.setData({ dateChips: chips, selectedDate: dateStr, dateLabel: dateStr });
+    waveFetcher.fetchWaveData(HUIZHOU_LAT, HUIZHOU_LON).then(function (data) {
+      this.renderDateData(data, dateStr);
+    }.bind(this));
+  },
+
   /* ── 快捷日期 ── */
   onTapChip: function (e) {
     var index = e.currentTarget.dataset.index;
@@ -116,7 +130,9 @@ Page({
     for (var i = 0; i < chips.length; i++) chips[i].active = (i === index);
     var sel = chips[index];
     this.setData({ dateChips: chips, selectedDate: sel.date, dateLabel: sel.label });
-    this.loadData(sel.date);
+    waveFetcher.fetchWaveData(HUIZHOU_LAT, HUIZHOU_LON).then(function (data) {
+      this.renderDateData(data, sel.date);
+    }.bind(this));
   },
 
   /* ── 日历弹窗 ── */
@@ -146,14 +162,15 @@ Page({
     var dateStr = e.currentTarget.dataset.date;
     if (!dateStr) return;
     if (dateStr < this.data.calMinDate || dateStr > this.data.calMaxDate) return;
-    // 清除chip选中
     var chips = this.data.dateChips;
     for (var i = 0; i < chips.length; i++) chips[i].active = false;
     this.setData({
       selectedDate: dateStr, dateLabel: dateStr,
       dateChips: chips, showCalendar: false,
     });
-    this.loadData(dateStr);
+    waveFetcher.fetchWaveData(HUIZHOU_LAT, HUIZHOU_LON).then(function (data) {
+      this.renderDateData(data, dateStr);
+    }.bind(this));
   },
 
   /* ── 数据加载 ── */
@@ -163,50 +180,31 @@ Page({
     this.setData({ loading: true, errorMsg: '' });
 
     waveFetcher.fetchWaveData(HUIZHOU_LAT, HUIZHOU_LON).then(function (data) {
-      var targetHourly = data.hourly.filter(function (h) { return h.time.slice(0, 10) === targetDate; });
-      var targetDaily = null;
+      that.setData({ _allDailyData: data.daily });
+
+      var todayDate = fmtDate(new Date());
+      var todayHourly = data.hourly.filter(function (h) { return h.time.slice(0, 10) === todayDate; });
+      var todayDaily = null;
       for (var i = 0; i < data.daily.length; i++) {
-        if (data.daily[i].date === targetDate) { targetDaily = data.daily[i]; break; }
+        if (data.daily[i].date === todayDate) { todayDaily = data.daily[i]; break; }
       }
-      if (!targetDaily) targetDaily = {};
+      if (!todayDaily) todayDaily = {};
 
-      var dayWaveH = targetDaily.wave_height_avg_m || 0;
-      var daySwell = targetDaily.swell_period_avg_s || 0;
-      var dayTemp = targetDaily.sea_temp_avg_c || 0;
+      var todayWaveH = todayDaily.wave_height_avg_m || 0;
+      var todaySwell = todayDaily.swell_period_avg_s || 0;
+      var todayTemp = todayDaily.sea_temp_avg_c || 0;
 
-      var summaries = recommender.evaluateAll(targetHourly, dayTemp);
-      var advice = recommender.buildAdvice(summaries, dayWaveH, daySwell, dayTemp);
+      var todaySummaries = recommender.evaluateAll(todayHourly, todayTemp);
+      var todayAdvice = recommender.buildAdvice(todaySummaries, todayWaveH, todaySwell, todayTemp);
 
-      var wMin = null, wMax = null, sMin = null, sMax = null;
-      for (var i = 0; i < targetHourly.length; i++) {
-        var wh = targetHourly[i].wave_height_m;
-        var sp = targetHourly[i].swell_period_s;
-        if (wh != null) { if (wMin === null || wh < wMin) wMin = wh; if (wMax === null || wh > wMax) wMax = wh; }
-        if (sp != null) { if (sMin === null || sp < sMin) sMin = sp; if (sMax === null || sp > sMax) sMax = sp; }
-      }
-      var waveRange = (wMin != null && wMax != null) ? wMin.toFixed(1) + 'm-' + wMax.toFixed(1) + 'm' : '--';
-      var waveRangeVal = (wMin != null && wMax != null) ? wMin.toFixed(1) + '-' + wMax.toFixed(1) : '--';
-      var swellRange = (sMin != null && sMax != null) ? sMin.toFixed(1) + 's-' + sMax.toFixed(1) + 's' : '--';
-      var swellRangeVal = (sMin != null && sMax != null) ? sMin.toFixed(1) + '-' + sMax.toFixed(1) : '--';
+      var weekRecs = that.buildWeekRecommendations(data.daily);
 
-      var topSpots = summaries.slice(0, 3).map(function (r) {
-        return {
-          spotId: r.spotId, name: r.name, area: r.area, level: r.level,
-          bottom: r.bottom, tideNote: r.tideNote,
-          stars: r.stars, starLabel: r.starLabel, starStr: r.starStr,
-          bestScore: r.bestScore, timeRange: r.timeRange,
-          waveRange: waveRange, waveRangeVal: waveRangeVal,
-          swellRange: swellRange, swellRangeVal: swellRangeVal,
-          avgSeaLevel: r.avgSeaLevel,
-          dimScores: r.dimScores, videoCid: r.videoCid,
-        };
-      });
+      that.renderDateData(data, targetDate);
 
       var now = new Date();
       that.setData({
-        loading: false, advice: advice,
-        todayWaveH: dayWaveH.toFixed(1), todaySwell: daySwell.toFixed(1), todayTemp: dayTemp.toFixed(0),
-        topSpots: topSpots,
+        todayAdvice: todayAdvice,
+        weekRecommendations: weekRecs,
         lastUpdate: now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0'),
       });
       wx.stopPullDownRefresh();
@@ -215,6 +213,80 @@ Page({
       that.setData({ loading: false, errorMsg: err.message || '浪况加载失败' });
       wx.stopPullDownRefresh();
     });
+  },
+
+  renderDateData: function (data, targetDate) {
+    var that = this;
+    var targetHourly = data.hourly.filter(function (h) { return h.time.slice(0, 10) === targetDate; });
+    var targetDaily = null;
+    for (var i = 0; i < data.daily.length; i++) {
+      if (data.daily[i].date === targetDate) { targetDaily = data.daily[i]; break; }
+    }
+    if (!targetDaily) targetDaily = {};
+
+    var dayWaveH = targetDaily.wave_height_avg_m || 0;
+    var daySwell = targetDaily.swell_period_avg_s || 0;
+    var dayTemp = targetDaily.sea_temp_avg_c || 0;
+
+    var summaries = recommender.evaluateAll(targetHourly, dayTemp);
+
+    var wMin = null, wMax = null, sMin = null, sMax = null;
+    for (var i = 0; i < targetHourly.length; i++) {
+      var wh = targetHourly[i].wave_height_m;
+      var sp = targetHourly[i].swell_period_s;
+      if (wh != null) { if (wMin === null || wh < wMin) wMin = wh; if (wMax === null || wh > wMax) wMax = wh; }
+      if (sp != null) { if (sMin === null || sp < sMin) sMin = sp; if (sMax === null || sp > sMax) sMax = sp; }
+    }
+    var waveRange = (wMin != null && wMax != null) ? wMin.toFixed(1) + 'm-' + wMax.toFixed(1) + 'm' : '--';
+    var waveRangeVal = (wMin != null && wMax != null) ? wMin.toFixed(1) + '-' + wMax.toFixed(1) : '--';
+    var swellRange = (sMin != null && sMax != null) ? sMin.toFixed(1) + 's-' + sMax.toFixed(1) + 's' : '--';
+    var swellRangeVal = (sMin != null && sMax != null) ? sMin.toFixed(1) + '-' + sMax.toFixed(1) : '--';
+
+    var topSpots = summaries.slice(0, 5).map(function (r) {
+      return {
+        spotId: r.spotId, name: r.name, area: r.area, level: r.level,
+        bottom: r.bottom, tideNote: r.tideNote,
+        stars: r.stars, starLabel: r.starLabel, starStr: r.starStr,
+        bestScore: r.bestScore, timeRange: r.timeRange,
+        waveRange: waveRange, waveRangeVal: waveRangeVal,
+        swellRange: swellRange, swellRangeVal: swellRangeVal,
+        avgSeaLevel: r.avgSeaLevel,
+        dimScores: r.dimScores, videoCid: r.videoCid,
+      };
+    });
+
+    that.setData({
+      loading: false,
+      todayWaveH: dayWaveH.toFixed(1), todaySwell: daySwell.toFixed(1), todayTemp: dayTemp.toFixed(0),
+      topSpots: topSpots,
+    });
+  },
+
+  buildWeekRecommendations: function (dailyData) {
+    var weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+    var sorted = dailyData.slice().sort(function (a, b) {
+      return (b.rating_score || 0) - (a.rating_score || 0);
+    });
+
+    var top3 = sorted.slice(0, 3).map(function (d) {
+      var dateObj = new Date(d.date);
+      var dateStr = d.date;
+      var dateLabel = dateStr.slice(5);
+      var scoreVal = d.rating_score || 0;
+      var scoreLabel = scoreVal.toFixed(1) + '分';
+      return {
+        date: dateStr,
+        dateLabel: dateLabel,
+        weekday: weekdays[dateObj.getDay()],
+        score: scoreVal,
+        scoreLabel: scoreLabel,
+        waveH: (d.wave_height_avg_m || 0).toFixed(1),
+        period: (d.swell_period_avg_s || 0).toFixed(1),
+        label: d.rating_label || 'fair',
+      };
+    });
+
+    return top3;
   },
 
   onRetryLoad: function () { this.loadData(this.data.selectedDate); },
