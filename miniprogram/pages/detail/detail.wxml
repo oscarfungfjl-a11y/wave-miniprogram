@@ -25,11 +25,18 @@
     <view class="section" wx:if="{{recSummary}}">
       <view class="flex-between mb-16">
         <text class="section-title">今日推荐</text>
-        <view class="star-badge star-bg-{{recSummary.stars}}">{{recSummary.starLabel}}</view>
+        <view class="star-badge star-bg-{{recSummary.starLevel}}">{{recSummary.starLabel}}</view>
       </view>
 
       <view class="rec-score-hero">
-        <text class="rec-big-stars">{{recSummary.starStr}}</text>
+        <view class="stars-container">
+          <view class="star-item" wx:for="{{[1,2,3,4,5]}}" wx:for-item="starIdx" wx:key="*this">
+            <text class="star-empty">☆</text>
+            <view class="star-full-wrap" style="width: {{recSummary.starWidths[starIdx - 1]}};">
+              <text class="star-full">★</text>
+            </view>
+          </view>
+        </view>
         <text class="rec-star-label">{{recSummary.starLabel}}</text>
       </view>
 
@@ -65,8 +72,8 @@
           <text class="h-th h-th-time">时间</text>
           <text class="h-th h-th-wave">浪高</text>
           <text class="h-th h-th-per">周期</text>
-          <text class="h-th h-th-dir">浪向</text>
-          <text class="h-th h-th-temp">水温</text>
+          <text class="h-th h-th-wind">风向</text>
+          <text class="h-th h-th-wind-speed">风速</text>
           <text class="h-th h-th-tide">潮高</text>
           <text class="h-th h-th-pts">评分</text>
         </view>
@@ -75,8 +82,8 @@
             <text class="h-td h-td-time">{{item.time_label}}</text>
             <text class="h-td h-td-wave">{{item.wave_height_m || '--'}}m</text>
             <text class="h-td h-td-per">{{item.swell_period_s || '--'}}s</text>
-            <text class="h-td h-td-dir">{{item.wave_direction_cn || '--'}}</text>
-            <text class="h-td h-td-temp">{{item.sea_temp_c || '--'}}°</text>
+            <text class="h-td h-td-wind">{{item.windType || '--'}}</text>
+            <text class="h-td h-td-wind-speed">{{item.wind_speed_kmh != null ? item.wind_speed_kmh + 'km/h' : '--'}}</text>
             <text class="h-td h-td-tide">{{item.sea_level_m ? item.sea_level_m + 'm' : '--'}}</text>
             <text wx:if="{{item.recScore != null}}" class="h-td h-td-pts rec-score-s{{item.recStars}}">{{item.recScore}}</text>
             <text wx:else class="h-td h-td-pts text-secondary">--</text>
@@ -95,21 +102,21 @@
         <view class="h-table mb-24">
           <view class="h-thead">
             <text class="h-th h-th-time">时间</text>
-            <text class="h-th h-th-wave">浪高</text>
-            <text class="h-th h-th-per">周期</text>
-            <text class="h-th h-th-dir">浪向</text>
-            <text class="h-th h-th-temp">水温</text>
-            <text class="h-th h-th-tide">潮高</text>
-            <text class="h-th h-th-pts">评分</text>
-          </view>
-          <view class="hourly-list">
-            <view class="h-tr" wx:for="{{item.hours}}" wx:key="time">
-              <text class="h-td h-td-time">{{item.time_label}}</text>
-              <text class="h-td h-td-wave">{{item.wave_height_m || '--'}}m</text>
-              <text class="h-td h-td-per">{{item.swell_period_s || '--'}}s</text>
-              <text class="h-td h-td-dir">{{item.wave_direction_cn || '--'}}</text>
-              <text class="h-td h-td-temp">{{item.sea_temp_c || '--'}}°</text>
-              <text class="h-td h-td-tide">{{item.sea_level_m ? item.sea_level_m + 'm' : '--'}}</text>
+          <text class="h-th h-th-wave">浪高</text>
+          <text class="h-th h-th-per">周期</text>
+          <text class="h-th h-th-wind">风向</text>
+          <text class="h-th h-th-wind-speed">风速</text>
+          <text class="h-th h-th-tide">潮高</text>
+          <text class="h-th h-th-pts">评分</text>
+        </view>
+        <view class="hourly-list">
+          <view class="h-tr" wx:for="{{item.hours}}" wx:key="time">
+            <text class="h-td h-td-time">{{item.time_label}}</text>
+            <text class="h-td h-td-wave">{{item.wave_height_m || '--'}}m</text>
+            <text class="h-td h-td-per">{{item.swell_period_s || '--'}}s</text>
+            <text class="h-td h-td-wind">{{item.windType || '--'}}</text>
+            <text class="h-td h-td-wind-speed">{{item.wind_speed_kmh != null ? item.wind_speed_kmh + 'km/h' : '--'}}</text>
+            <text class="h-td h-td-tide">{{item.sea_level_m ? item.sea_level_m + 'm' : '--'}}</text>
               <text wx:if="{{item.recScore != null}}" class="h-td h-td-pts rec-score-s{{item.recStars}}">{{item.recScore}}</text>
               <text wx:else class="h-td h-td-pts text-secondary">--</text>
             </view>

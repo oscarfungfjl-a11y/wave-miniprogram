@@ -26,6 +26,7 @@ Page({
         dirRules: this.formatDirRules(s.dirRules),
         waveRanges: this.formatRanges(s.waveRanges, 'm'),
         swellRanges: this.formatRanges(s.swellRanges, 's'),
+        windRules: this.formatWindRules(s.windRules),
       });
     }
 
@@ -53,5 +54,10 @@ Page({
       parts.push(label);
     }
     return parts.join('，');
+  },
+
+  formatWindRules: function (rules) {
+    if (!rules) return '--';
+    return '离岸风（10分）：' + rules.offshore.join('/') + ' | 迎岸风（2分）：' + rules.onshore.join('/');
   },
 });

@@ -100,13 +100,20 @@
         <view class="top-card-header" catchtap="onHeaderJump" data-cid="{{item.videoCid}}">
           <text class="top-spot-name">{{item.name}}</text>
           <text class="top-spot-area text-sm ml-12">（{{item.area}}）</text>
-          <view class="star-badge star-bg-{{item.stars}} text-sm">
+          <view class="star-badge star-bg-{{item.starLevel}} text-sm">
             {{item.starLabel}}
           </view>
         </view>
         <view class="top-card-body">
           <view class="top-score-row">
-            <text class="top-big-stars">{{item.starStr}}</text>
+            <view class="stars-container">
+              <view class="star-item" wx:for="{{[1,2,3,4,5]}}" wx:for-item="starIdx" wx:key="*this">
+                <text class="star-empty">☆</text>
+                <view class="star-full-wrap" style="width: {{item.starWidths[starIdx - 1]}};">
+                  <text class="star-full">★</text>
+                </view>
+              </view>
+            </view>
           </view>
           <view class="top-row">
             <view class="metric-col metric-col-wave">
@@ -117,9 +124,9 @@
               <text class="metric-label">周期（s）</text>
               <text class="metric-val metric-val-swell">{{item.swellRangeVal}}</text>
             </view>
-            <view class="metric-col metric-col-tide">
-              <text class="metric-label">潮高（m）</text>
-              <text class="metric-val metric-val-tide">{{item.avgSeaLevel}}</text>
+            <view class="metric-col metric-col-wind">
+              <text class="metric-label">风速（km/h）</text>
+              <text class="metric-val metric-val-wind">{{item.windSpeedRange}}</text>
             </view>
           </view>
           <view class="top-time">

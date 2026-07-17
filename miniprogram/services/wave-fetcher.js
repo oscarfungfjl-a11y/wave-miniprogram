@@ -1,9 +1,10 @@
 /**
- * 浪况数据服务 — 直接调用 Open-Meteo Marine API
- * 无需后端，前端直接获取全球浪况预报
+ * 浪况数据服务 — 调用 Open-Meteo Marine API + Weather API
+ * Marine API 提供浪况数据，Weather API 提供风况数据
  */
 
-const API_BASE = 'https://marine-api.open-meteo.com/v1/marine';
+const MARINE_API = 'https://marine-api.open-meteo.com/v1/marine';
+const WEATHER_API = 'https://api.open-meteo.com/v1/forecast';
 const FORECAST_DAYS = 7;
 const HOURLY_PARAMS = [
   'wave_height',
@@ -80,40 +81,97 @@ function dominantDirection(dirs) {
  */
 function fetchWaveData(lat, lon) {
   return new Promise(function (resolve, reject) {
-    var params = HOURLY_PARAMS.join(',');
-    var url = API_BASE +
+    var marineParams = HOURLY_PARAMS.join(',');
+    var marineUrl = MARINE_API +
       '?latitude=' + lat +
       '&longitude=' + lon +
-      '&hourly=' + params +
+      '&hourly=' + marineParams +
       '&timezone=Asia/Shanghai' +
       '&forecast_days=' + FORECAST_DAYS +
       '&length_unit=metric';
 
-    console.log('[wave-fetcher] Requesting:', url);
+    var windParams = 'wind_speed_10m,wind_direction_10m';
+    var windUrl = WEATHER_API +
+      '?latitude=' + lat +
+      '&longitude=' + lon +
+      '&hourly=' + windParams +
+      '&timezone=Asia/Shanghai' +
+      '&forecast_days=' + FORECAST_DAYS;
+
+    console.log('[wave-fetcher] Requesting marine:', marineUrl);
+    console.log('[wave-fetcher] Requesting wind:', windUrl);
+
+    // 并行请求浪况和风况数据
+    var marineData = null;
+    var windData = null;
+    var marineError = null;
+    var windError = null;
+    var done = 0;
+
+    function onDone() {
+      done++;
+      if (done < 2) return;
+
+      if (marineError) {
+        reject(marineError);
+        return;
+      }
+
+      // 合并风况数据到浪况数据
+      if (windData && windData.hourly) {
+        var windHourly = windData.hourly;
+        // 将风况数据合并到 marine hourly
+        if (marineData && marineData.hourly) {
+          marineData.hourly.wind_speed_10m = windHourly.wind_speed_10m;
+          marineData.hourly.wind_direction_10m = windHourly.wind_direction_10m;
+        }
+      }
+
+      try {
+        var parsed = parseWaveData(marineData);
+        console.log('[wave-fetcher] Parsed:', parsed.hourly.length, 'hours,', parsed.daily.length, 'days');
+        resolve(parsed);
+      } catch (e) {
+        console.error('[wave-fetcher] Parse error:', e);
+        reject(new Error('浪况数据解析失败: ' + e.message));
+      }
+    }
 
     wx.request({
-      url: url,
+      url: marineUrl,
       method: 'GET',
       timeout: 30000,
       success: function (res) {
-        console.log('[wave-fetcher] Response status:', res.statusCode);
         if (res.statusCode === 200 && res.data && res.data.hourly) {
-          try {
-            var parsed = parseWaveData(res.data);
-            console.log('[wave-fetcher] Parsed:', parsed.hourly.length, 'hours,', parsed.daily.length, 'days');
-            resolve(parsed);
-          } catch (e) {
-            console.error('[wave-fetcher] Parse error:', e);
-            reject(new Error('浪况数据解析失败: ' + e.message));
-          }
+          marineData = res.data;
         } else {
-          console.error('[wave-fetcher] Bad response:', res.statusCode);
-          reject(new Error('浪况数据获取失败 (status: ' + res.statusCode + ')'));
+          marineError = new Error('浪况数据获取失败 (status: ' + res.statusCode + ')');
         }
+        onDone();
       },
       fail: function (err) {
-        console.error('[wave-fetcher] Request failed:', err);
-        reject(new Error('网络请求失败: ' + (err.errMsg || 'unknown')));
+        marineError = new Error('浪况网络请求失败: ' + (err.errMsg || 'unknown'));
+        onDone();
+      },
+    });
+
+    wx.request({
+      url: windUrl,
+      method: 'GET',
+      timeout: 30000,
+      success: function (res) {
+        if (res.statusCode === 200 && res.data && res.data.hourly) {
+          windData = res.data;
+        } else {
+          console.warn('[wave-fetcher] Wind data unavailable, scores will use defaults');
+          windData = null;
+        }
+        onDone();
+      },
+      fail: function (err) {
+        console.warn('[wave-fetcher] Wind request failed, scores will use defaults:', err.errMsg);
+        windData = null;
+        onDone();
       },
     });
   });
@@ -133,6 +191,8 @@ function parseWaveData(raw) {
     var timeStr = times[i];
     var timeLabel = timeStr.slice(11, 16); // HH:MM
 
+    var windDeg = hourly.wind_direction_10m ? hourly.wind_direction_10m[i] : null;
+
     hourlyList.push({
       time: timeStr,
       time_label: timeLabel,
@@ -145,6 +205,9 @@ function parseWaveData(raw) {
       wave_direction_cn: degreeToDirection(deg),
       sea_temp_c: hourly.sea_surface_temperature[i],
       sea_level_m: hourly.sea_level_height_msl[i],
+      wind_speed_kmh: hourly.wind_speed_10m ? hourly.wind_speed_10m[i] : null,
+      wind_direction_deg: windDeg,
+      wind_direction_cn: degreeToDirection(windDeg),
     });
   }
 
@@ -157,6 +220,7 @@ function parseWaveData(raw) {
         wave_height: [], swell_wave_height: [], swell_wave_period: [],
         wind_wave_height: [], wave_period: [], wave_direction: [],
         sea_surface_temperature: [], sea_level: [],
+        wind_speed: [], wind_direction: [],
       };
     }
     dailyMap[dateStr].wave_height.push(entry.wave_height_m);
@@ -167,6 +231,8 @@ function parseWaveData(raw) {
     dailyMap[dateStr].wave_direction.push(entry.wave_direction_deg);
     dailyMap[dateStr].sea_surface_temperature.push(entry.sea_temp_c);
     dailyMap[dateStr].sea_level.push(entry.sea_level_m);
+    dailyMap[dateStr].wind_speed.push(entry.wind_speed_kmh);
+    if (entry.wind_direction_deg != null) dailyMap[dateStr].wind_direction.push(entry.wind_direction_deg);
   });
 
   // 构建每日摘要
@@ -175,6 +241,7 @@ function parseWaveData(raw) {
   dates.forEach(function (dateStr) {
     var d = dailyMap[dateStr];
     var dir = dominantDirection(d.wave_direction);
+    var windDir = dominantDirection(d.wind_direction);
     var surfScore = calcSurfScore(
       safeAvg(d.wave_height),
       safeAvg(d.swell_wave_period),
@@ -195,6 +262,9 @@ function parseWaveData(raw) {
       sea_temp_avg_c: safeAvg(d.sea_surface_temperature),
       sea_level_avg_m: safeAvg(d.sea_level),
       sea_level_max_m: safeMax(d.sea_level),
+      wind_speed_avg_kmh: safeAvg(d.wind_speed),
+      wind_speed_max_kmh: safeMax(d.wind_speed),
+      wind_direction_cn: windDir.direction,
       rating_score: surfScore.score,
       rating_label: surfScore.label,
     });

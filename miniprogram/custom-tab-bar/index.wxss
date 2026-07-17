@@ -1,12 +1,12 @@
 .tab-bar {
   position: fixed;
-  bottom: 24rpx;
-  bottom: calc(24rpx + constant(safe-area-inset-bottom));
-  bottom: calc(24rpx + env(safe-area-inset-bottom));
+  bottom: 0;
+  bottom: calc(0rpx + constant(safe-area-inset-bottom));
+  bottom: calc(0rpx + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
   width: 400rpx;
-  height: 96rpx;
+  height: 88rpx;
   background: rgba(20, 32, 56, 0.70);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);

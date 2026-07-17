@@ -1,9 +1,16 @@
 /**
- * 双月湾浪点推荐引擎 v3
- * 四维加权打分 + 五星评级
- * 浪向适配(最高28) + 浪高匹配(最高28) + 涌浪周期(最高23) + 潮汐水位(最高15) = 理论满分94
- * 星级映射：5★高推荐(≥80) / 4★推荐(≥63) / 3★一般(≥45) / 2★较差(≥25) / 1★不推荐(<25)
+ * 双月湾浪点推荐引擎 v5
+ * 当日综合浪况五维评分：周期(40) + 浪高(30) + 风向(10) + 潮汐(10) + 浪向(10) = 满分100
+ * 星级映射：5★高推荐 ≥80 / 4★推荐 ≥60 / 3★一般 ≥40 / 2★较差 ≥20 / 1★不推荐 <20
+ *
+ * 注意：浪向和风向为全局10分项，浪高/周期仍按各浪点适配区间打分
  */
+
+var SWELL_MAX = 40;     // 涌浪周期满分
+var WAVE_MAX = 30;      // 浪高满分
+var WIND_MAX = 10;      // 风向满分（全局）
+var TIDE_MAX = 10;      // 潮汐满分
+var DIR_MAX = 10;       // 浪向满分（全局）
 
 /**
  * 波向 → 方向组归类
@@ -22,26 +29,47 @@ function classifyDir(cn) {
 }
 
 /**
- * 三点线性插值打分
+ * 多点线性插值打分
  * @param {number} value - 实际值
- * @param {Array} ranges - [[threshold, score], [threshold, score], ...] 按threshold升序
+ * @param {Array} ranges - [[threshold, score], [threshold, score], ...] 支持升序、降序、峰值模式
  * @returns {number}
  */
 function linearScore(value, ranges) {
   if (value == null) return 0;
-  if (value <= ranges[0][0]) return ranges[0][1];
-  if (value >= ranges[ranges.length - 1][0]) return ranges[ranges.length - 1][1];
-  for (var i = 0; i < ranges.length - 1; i++) {
-    if (value >= ranges[i][0] && value <= ranges[i + 1][0]) {
-      var t = (value - ranges[i][0]) / (ranges[i + 1][0] - ranges[i][0]);
-      return ranges[i][1] + t * (ranges[i + 1][1] - ranges[i][1]);
+  
+  for (var i = 0; i < ranges.length; i++) {
+    if (value === ranges[i][0]) {
+      return ranges[i][1];
     }
   }
-  return 0;
+  
+  for (var i = 0; i < ranges.length - 1; i++) {
+    var t0 = ranges[i][0], s0 = ranges[i][1];
+    var t1 = ranges[i+1][0], s1 = ranges[i+1][1];
+    
+    if (t0 === t1) {
+      if (value >= t0) continue;
+      return s0;
+    }
+    
+    if (t0 < t1) {
+      if (value > t0 && value < t1) {
+        var t = (value - t0) / (t1 - t0);
+        return s0 + t * (s1 - s0);
+      }
+    } else {
+      if (value < t0 && value > t1) {
+        var t = (t0 - value) / (t0 - t1);
+        return s0 + t * (s1 - s0);
+      }
+    }
+  }
+  
+  return ranges[ranges.length - 1][1];
 }
 
 /**
- * 浪向得分 — 字符串匹配
+ * 浪向得分 — 字符串匹配（浪点适配的浪向）
  * @param {Array} rules - [{dirs: [...], score: number}, ...]
  */
 function dirScore(actualDir, rules) {
@@ -54,7 +82,7 @@ function dirScore(actualDir, rules) {
   return rules[rules.length - 1].score || 0;
 }
 
-// ── 各浪点评分规则表 ──
+// ── 各浪点评分规则表（满分 100 分） ──
 
 var SPOT_SCORING = {
   'huizhou-loop': {
@@ -63,13 +91,17 @@ var SPOT_SCORING = {
     level: '全水平通用', bottom: '纯沙底安全浪点',
     videoCid: 3,
     dirRules: [
-      { dirs: ['东', '东南'], score: 28 },
-      { dirs: ['东北'], score: 20 },
-      { dirs: ['南', '北'], score: 10 },
+      { dirs: ['东', '东南'], score: 10 },
+      { dirs: ['东北'], score: 7 },
+      { dirs: ['南', '北'], score: 4 },
       { dirs: ['西', '西南', '西北'], score: 0 },
     ],
-    waveRanges: [[0.6, 28], [1.5, 28], [2.0, 10], [3.0, 0]],
-    swellRanges: [[10, 23], [7, 15], [5, 5]],
+    waveRanges: [[0.6, 0], [0.6, 30], [1.5, 30], [2.0, 10], [3.0, 0]],
+    swellRanges: [[10, 40], [7, 25], [5, 10]],
+    windRules: {
+      offshore: ['西', '西北', '西南'],
+      onshore: ['东', '东南', '东北'],
+    },
     tideNote: '涨潮/高潮最佳',
   },
   'huizhou-qingrendao': {
@@ -78,12 +110,16 @@ var SPOT_SCORING = {
     level: '新手入门', bottom: '平缓沙底',
     videoCid: 67,
     dirRules: [
-      { dirs: ['东', '东南'], score: 28 },
-      { dirs: ['东北', '南'], score: 20 },
+      { dirs: ['东', '东南'], score: 10 },
+      { dirs: ['东北', '南'], score: 7 },
       { dirs: ['西', '西南', '西北'], score: 0 },
     ],
-    waveRanges: [[0.3, 28], [0.8, 28], [1.2, 10], [1.5, 0]],
-    swellRanges: [[8, 23], [6, 15], [4, 5]],
+    waveRanges: [[0.3, 0], [0.3, 30], [0.8, 30], [1.2, 10], [1.5, 0]],
+    swellRanges: [[8, 40], [6, 25], [4, 10]],
+    windRules: {
+      offshore: ['西', '西北', '西南'],
+      onshore: ['东', '东南', '东北'],
+    },
     tideNote: '中潮-高潮段最佳',
   },
   'huizhou-honghaiwan': {
@@ -92,12 +128,16 @@ var SPOT_SCORING = {
     level: '入门-进阶', bottom: '牛奶浪特色',
     videoCid: 54,
     dirRules: [
-      { dirs: ['东', '东南'], score: 28 },
-      { dirs: ['东北', '南'], score: 18 },
+      { dirs: ['东', '东南'], score: 10 },
+      { dirs: ['东北', '南'], score: 6 },
       { dirs: ['西', '西南', '西北', '北'], score: 0 },
     ],
-    waveRanges: [[0.8, 28], [1.8, 28], [2.2, 10], [3.0, 0]],
-    swellRanges: [[10, 23], [7, 15], [5, 5]],
+    waveRanges: [[0.8, 0], [0.8, 30], [1.8, 30], [2.2, 10], [3.0, 0]],
+    swellRanges: [[10, 40], [7, 25], [5, 10]],
+    windRules: {
+      offshore: ['西', '西北', '北西北'],
+      onshore: ['东', '东南', '南东南'],
+    },
     tideNote: '涨潮期-高潮最佳',
   },
   'huizhou-gaoyangwei': {
@@ -106,12 +146,16 @@ var SPOT_SCORING = {
     level: '进阶-资深', bottom: '礁石旁强力浪点',
     videoCid: 1,
     dirRules: [
-      { dirs: ['东南', '南'], score: 28 },
-      { dirs: ['东', '西南'], score: 18 },
+      { dirs: ['东南', '南'], score: 10 },
+      { dirs: ['东', '西南'], score: 6 },
       { dirs: ['北', '西', '西北'], score: 0 },
     ],
-    waveRanges: [[1.0, 28], [2.2, 28], [2.8, 10], [3.5, 0]],
-    swellRanges: [[12, 23], [9, 15], [7, 5]],
+    waveRanges: [[1.0, 0], [1.0, 30], [2.2, 30], [2.8, 10], [3.5, 0]],
+    swellRanges: [[12, 40], [9, 25], [7, 10]],
+    windRules: {
+      offshore: ['西', '西北', '西南'],
+      onshore: ['东', '东南', '东北'],
+    },
     tideNote: '中潮-高潮（礁石淹没无风险）',
   },
   'huizhou-wanke': {
@@ -120,12 +164,16 @@ var SPOT_SCORING = {
     level: '纯新手·亲子', bottom: '内湾平缓浪点',
     videoCid: 53,
     dirRules: [
-      { dirs: ['西南', '南'], score: 28 },
-      { dirs: ['西'], score: 20 },
+      { dirs: ['西南', '南'], score: 10 },
+      { dirs: ['西'], score: 7 },
       { dirs: ['东', '东北', '北'], score: 0 },
     ],
-    waveRanges: [[0.3, 28], [0.8, 28], [1.2, 10], [1.5, 0]],
-    swellRanges: [[8, 23], [6, 15], [4, 5]],
+    waveRanges: [[0.3, 0], [0.3, 30], [0.8, 30], [1.2, 10], [1.5, 0]],
+    swellRanges: [[8, 40], [6, 25], [4, 10]],
+    windRules: {
+      offshore: ['东', '东北', '北'],
+      onshore: ['西', '西南', '南'],
+    },
     tideNote: '中潮-高潮最佳',
   },
   'huizhou-shizidao': {
@@ -134,12 +182,16 @@ var SPOT_SCORING = {
     level: '入门-进阶', bottom: '西岸优质浪点',
     videoCid: 2,
     dirRules: [
-      { dirs: ['西南', '南'], score: 28 },
-      { dirs: ['西'], score: 18 },
+      { dirs: ['西南', '南'], score: 10 },
+      { dirs: ['西'], score: 6 },
       { dirs: ['东', '北', '东北'], score: 0 },
     ],
-    waveRanges: [[0.6, 28], [1.5, 28], [2.0, 10], [3.0, 0]],
-    swellRanges: [[10, 23], [7, 15], [5, 5]],
+    waveRanges: [[0.6, 0], [0.6, 30], [1.5, 30], [2.0, 10], [3.0, 0]],
+    swellRanges: [[10, 40], [7, 25], [5, 10]],
+    windRules: {
+      offshore: ['东', '东北', '北'],
+      onshore: ['西', '西南', '南'],
+    },
     tideNote: '涨潮-高潮段最佳',
   },
 };
@@ -147,59 +199,131 @@ var SPOT_SCORING = {
 /**
  * 潮汐水位得分 — 基于海平面高度偏离日均值
  * 高于日均值 = 涨潮/高潮段 → 高分
- * @param {number} seaLevel - 当前小时海平面高度 (m)
- * @param {number} dailyMean - 当日海平面均值 (m)
- * @param {number} dailyMax - 当日海平面最大值 (m)
- * @param {number} dailyMin - 当日海平面最小值 (m)
- * @returns {number} 0-15
+ * @returns {number} 0-10
  */
 function tideScore(seaLevel, dailyMean, dailyMax, dailyMin) {
-  if (seaLevel == null || dailyMean == null) return 8; // 无数据默认中档
+  if (seaLevel == null || dailyMean == null) return 5;
 
-  // 归一化到 [-1, 1] 范围
   var range = dailyMax - dailyMin;
-  if (range < 0.05) return 8; // 潮差极小，默认中档
+  if (range < 0.05) return 5;
 
   var normalized = (seaLevel - dailyMean) / (range / 2);
   normalized = Math.max(-1, Math.min(1, normalized));
 
-  // 映射到 0-15：高于均值 → 高分
-  var score = 7.5 + normalized * 7.5;
-  return Math.round(Math.max(0, Math.min(15, score)));
+  var score = 5 + normalized * 5;
+  return Math.round(Math.max(0, Math.min(10, score)));
 }
 
 /**
- * 分数 → 星级映射
- * 5★高推荐 ≥80 | 4★推荐 ≥63 | 3★一般 ≥45 | 2★较差 ≥25 | 1★不推荐 <25
+ * 判断风向类型
+ */
+function getWindType(windDir, windRules) {
+  if (!windRules) return '侧风';
+  var dir = classifyDir(windDir);
+  for (var i = 0; i < windRules.offshore.length; i++) {
+    if (classifyDir(windRules.offshore[i]) === dir) return '离岸风';
+  }
+  for (var j = 0; j < windRules.onshore.length; j++) {
+    if (classifyDir(windRules.onshore[j]) === dir) return '迎岸风';
+  }
+  return '侧风';
+}
+
+/**
+ * 风向得分 — 离岸风高分，迎岸风低分（满分10）
+ */
+function windScore(windDir, windSpeed, windRules) {
+  if (!windRules) return 5;
+
+  var dir = classifyDir(windDir);
+  var isOffshore = false;
+  var isOnshore = false;
+
+  for (var i = 0; i < windRules.offshore.length; i++) {
+    if (classifyDir(windRules.offshore[i]) === dir) { isOffshore = true; break; }
+  }
+  if (!isOffshore) {
+    for (var j = 0; j < windRules.onshore.length; j++) {
+      if (classifyDir(windRules.onshore[j]) === dir) { isOnshore = true; break; }
+    }
+  }
+
+  var dirBase;
+  if (isOffshore) dirBase = 10;
+  else if (isOnshore) dirBase = 2;
+  else dirBase = 6;
+
+  if (windSpeed == null) return 5;
+
+  if (windSpeed <= 10) return dirBase;
+  else if (windSpeed <= 20) {
+    if (isOffshore) return Math.round(dirBase * 0.9);
+    if (isOnshore) return Math.round(dirBase * 0.7);
+    return Math.round(dirBase * 0.85);
+  } else if (windSpeed <= 30) {
+    if (isOffshore) return Math.round(dirBase * 0.7);
+    if (isOnshore) return Math.round(dirBase * 0.4);
+    return Math.round(dirBase * 0.6);
+  } else {
+    if (isOffshore) return Math.round(dirBase * 0.5);
+    if (isOnshore) return Math.round(dirBase * 0.2);
+    return Math.round(dirBase * 0.4);
+  }
+}
+
+/**
+ * 分数 → 星级映射（支持半星）
+ * 5.0★高推荐 ≥90 | 4.5★ ≥80 | 4.0★推荐 ≥70 | 3.5★ ≥60 | 3.0★一般 ≥50 | 2.5★ ≥40 | 2.0★较差 ≥30 | 1.5★ ≥20 | 1.0★不推荐 <20
  */
 function scoreToStars(score) {
-  if (score >= 80) return 5;
-  if (score >= 63) return 4;
-  if (score >= 45) return 3;
-  if (score >= 25) return 2;
-  return 1;
+  if (score >= 90) return 5.0;
+  if (score >= 80) return 4.5;
+  if (score >= 70) return 4.0;
+  if (score >= 60) return 3.5;
+  if (score >= 50) return 3.0;
+  if (score >= 40) return 2.5;
+  if (score >= 30) return 2.0;
+  if (score >= 20) return 1.5;
+  return 1.0;
 }
 
 var STAR_LABELS = {
-  5: '高推荐',
-  4: '推荐',
-  3: '一般',
-  2: '较差',
-  1: '不推荐',
+  '5': '高推荐',
+  '4.5': '高推荐',
+  '4': '推荐',
+  '3.5': '推荐',
+  '3': '一般',
+  '2.5': '一般',
+  '2': '较差',
+  '1.5': '较差',
+  '1': '不推荐',
 };
 
-/** 生成星形字符串，如 3 → "★★★☆☆" */
+/** 生成星形字符串，如 3.5 → "★★★½☆" */
 function starString(stars) {
-  return '★★★★★☆☆☆☆☆'.slice(5 - stars, 10 - stars);
+  var fullStars = Math.floor(stars);
+  var hasHalf = stars % 1 >= 0.5;
+  var emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
+  return '★'.repeat(fullStars) + (hasHalf ? '½' : '') + '☆'.repeat(emptyStars);
+}
+
+/** 生成半星宽度数组，避免WXML中使用嵌套三元运算 */
+function starWidths(stars) {
+  var widths = [];
+  for (var i = 1; i <= 5; i++) {
+    if (i <= stars) {
+      widths.push('100%');
+    } else if (i - 0.5 <= stars) {
+      widths.push('50%');
+    } else {
+      widths.push('0%');
+    }
+  }
+  return widths;
 }
 
 /**
  * 对单个浪点逐小时打分
- * @param {Array} hourlyData - 包含 sea_level_m 的小时数据
- * @param {number} dailySeaMean - 当日海平面均值
- * @param {number} dailySeaMax - 当日海平面最大值
- * @param {number} dailySeaMin - 当日海平面最小值
- * @returns {Array} 每小时评分结果
  */
 function scoreHourly(spotId, hourlyData, dailySeaMean, dailySeaMax, dailySeaMin) {
   var rules = SPOT_SCORING[spotId];
@@ -212,13 +336,14 @@ function scoreHourly(spotId, hourlyData, dailySeaMean, dailySeaMax, dailySeaMin)
     var swellPeriod = h.swell_period_s;
     var waveDir = h.wave_direction_cn;
 
-    // 四维打分
-    var dirS = dirScore(waveDir, rules.dirRules);
-    var waveS = linearScore(waveH, rules.waveRanges);
-    var swellS = linearScore(swellPeriod, rules.swellRanges);
-    var tideS = tideScore(h.sea_level_m, dailySeaMean, dailySeaMax, dailySeaMin);
+    var dirS = dirScore(waveDir, rules.dirRules);            // 满分10
+    var waveS = linearScore(waveH, rules.waveRanges);        // 满分30
+    var swellS = linearScore(swellPeriod, rules.swellRanges); // 满分40
+    var windS = windScore(h.wind_direction_cn, h.wind_speed_kmh, rules.windRules); // 满分10
+    var tideS = tideScore(h.sea_level_m, dailySeaMean, dailySeaMax, dailySeaMin);  // 满分10
+    var windT = getWindType(h.wind_direction_cn, rules.windRules);
 
-    var total = Math.round(dirS + waveS + swellS + tideS);
+    var total = Math.round(dirS + waveS + swellS + windS + tideS);
     var stars = scoreToStars(total);
 
     results.push({
@@ -226,12 +351,16 @@ function scoreHourly(spotId, hourlyData, dailySeaMean, dailySeaMax, dailySeaMin)
       waveH: waveH,
       swellPeriod: swellPeriod,
       waveDir: waveDir,
+      windDir: h.wind_direction_cn,
+      windSpeed: h.wind_speed_kmh,
+      windType: windT,
       seaLevel: h.sea_level_m,
       totalScore: total,
       stars: stars,
       dirScore: Math.round(dirS),
       waveScore: Math.round(waveS),
       swellScore: Math.round(swellS),
+      windScore: Math.round(windS),
       tideScore: Math.round(tideS),
     });
   }
@@ -239,7 +368,7 @@ function scoreHourly(spotId, hourlyData, dailySeaMean, dailySeaMax, dailySeaMin)
 }
 
 /**
- * 合并连续时间标签（如 ["08:00","09:00","12:00"] → "08:00~09:00、12:00"）
+ * 合并连续时间标签
  */
 function mergeTimeRanges(hours) {
   if (!hours || hours.length === 0) return '暂无推荐时段';
@@ -276,14 +405,19 @@ function summarizeSpot(spotId, scores) {
     else if (s.stars === 3) avgHours.push(s.time);
   }
 
-  // 取最佳3小时的浪况均值
   var sorted = scores.slice().sort(function (a, b) { return b.totalScore - a.totalScore; });
   var top3 = sorted.slice(0, 3);
   var avgWaveH = 0, avgSwell = 0, avgSeaLevel = 0;
+  var windSpeedMin = null, windSpeedMax = null;
   if (top3.length > 0) {
     avgWaveH = top3.reduce(function (sum, s) { return sum + (s.waveH || 0); }, 0) / top3.length;
     avgSwell = top3.reduce(function (sum, s) { return sum + (s.swellPeriod || 0); }, 0) / top3.length;
     avgSeaLevel = top3.reduce(function (sum, s) { return sum + (s.seaLevel || 0); }, 0) / top3.length;
+    var windSpeeds = top3.filter(function (s) { return s.windSpeed != null; }).map(function (s) { return s.windSpeed; });
+    if (windSpeeds.length > 0) {
+      windSpeedMin = Math.min.apply(null, windSpeeds);
+      windSpeedMax = Math.max.apply(null, windSpeeds);
+    }
   }
 
   var stars = scoreToStars(bestScore);
@@ -296,6 +430,7 @@ function summarizeSpot(spotId, scores) {
     dirScore: sorted[0].dirScore,
     waveScore: sorted[0].waveScore,
     swellScore: sorted[0].swellScore,
+    windScore: sorted[0].windScore,
     tideScore: sorted[0].tideScore,
   } : null;
 
@@ -311,12 +446,16 @@ function summarizeSpot(spotId, scores) {
     stars: stars,
     starLabel: STAR_LABELS[stars],
     starStr: starString(stars),
+    starLevel: stars >= 4.5 ? 5 : stars >= 3.5 ? 4 : stars >= 2.5 ? 3 : stars >= 1.5 ? 2 : 1,
     timeRange: timeText,
     recHours: recHours.length,
     avgHours: avgHours.length,
     avgWaveH: avgWaveH.toFixed(1),
     avgSwell: avgSwell.toFixed(1),
     avgSeaLevel: avgSeaLevel.toFixed(2),
+    windSpeedRange: (windSpeedMin != null && windSpeedMax != null)
+      ? windSpeedMin.toFixed(1) + '-' + windSpeedMax.toFixed(1)
+      : '--',
     dimScores: bestHourScores,
     scores: sorted.slice(0, 5),
   };
@@ -326,7 +465,6 @@ function summarizeSpot(spotId, scores) {
  * 评估所有浪点，返回排序后的汇总
  */
 function evaluateAll(hourlyData, waterTemp) {
-  // 计算当日海平面统计值
   var seaLevels = [];
   for (var i = 0; i < hourlyData.length; i++) {
     if (hourlyData[i].sea_level_m != null) {
@@ -354,7 +492,6 @@ function evaluateAll(hourlyData, waterTemp) {
     summaries.push(summary);
   }
 
-  // 按最佳得分降序排列
   summaries.sort(function (a, b) { return b.bestScore - a.bestScore; });
   return summaries;
 }
@@ -362,16 +499,16 @@ function evaluateAll(hourlyData, waterTemp) {
 /**
  * 生成自然语言建议
  */
-function buildAdvice(summaries, todayWaveH, todaySwell, todayTemp) {
+function buildAdvice(summaries, todayWaveH, todaySwell, todayTemp, todayWindSpeed, todayWindDir) {
   if (summaries.length === 0) return '暂无数据';
 
   var best = summaries[0];
   if (best.stars < 3) {
-    // 1-2★ 不推荐
     var reasons = [];
     if (todaySwell < 6) reasons.push('涌浪周期过低（' + todaySwell.toFixed(1) + 's）');
     if (todayWaveH < 0.3) reasons.push('浪高偏低（' + todayWaveH.toFixed(1) + 'm）');
     else if (todayWaveH > 2.8) reasons.push('浪高偏大（' + todayWaveH.toFixed(1) + 'm）');
+    if (todayWindSpeed != null && todayWindSpeed > 25) reasons.push('风力偏大（' + todayWindSpeed.toFixed(0) + 'km/h）');
     if (reasons.length === 0) reasons.push('浪向与各浪点适配方向不匹配');
     return '今日不推荐：' + reasons.join('；') + '。建议改日再来。';
   }
@@ -392,7 +529,22 @@ function buildAdvice(summaries, todayWaveH, todaySwell, todayTemp) {
   if (todaySwell >= 10) parts.push('涌浪周期优秀（' + todaySwell.toFixed(1) + 's）');
   else if (todaySwell >= 7) parts.push('涌浪周期良好（' + todaySwell.toFixed(1) + 's）');
 
-  // 安全提示
+  if (todayWindSpeed != null) {
+    var bestSpot = great.length > 0 ? great[0] : good.length > 0 ? good[0] : best;
+    var windRules = SPOT_SCORING[bestSpot.spotId] ? SPOT_SCORING[bestSpot.spotId].windRules : null;
+    if (windRules) {
+      var wDir = classifyDir(todayWindDir);
+      var isOff = windRules.offshore.some(function (d) { return classifyDir(d) === wDir; });
+      if (isOff && todayWindSpeed <= 15) {
+        parts.push('离岸风（' + todayWindDir + ' ' + todayWindSpeed.toFixed(0) + 'km/h），浪面干净');
+      } else if (todayWindSpeed > 25) {
+        parts.push('注意：风力较大（' + todayWindSpeed.toFixed(0) + 'km/h），浪面可能杂乱');
+      } else if (!isOff && todayWindSpeed > 15) {
+        parts.push('迎岸风（' + todayWindDir + ' ' + todayWindSpeed.toFixed(0) + 'km/h），浪面可能受影响');
+      }
+    }
+  }
+
   if (todayTemp < 16) parts.push('注意：水温偏低（' + todayTemp.toFixed(0) + '°C），需配备湿衣');
   var evals = best.scores || [];
   if (evals.length > 0) {
@@ -405,10 +557,17 @@ function buildAdvice(summaries, todayWaveH, todaySwell, todayTemp) {
 
 module.exports = {
   SPOT_SCORING: SPOT_SCORING,
+  SWELL_MAX: SWELL_MAX,
+  WAVE_MAX: WAVE_MAX,
+  WIND_MAX: WIND_MAX,
+  TIDE_MAX: TIDE_MAX,
+  DIR_MAX: DIR_MAX,
   evaluateAll: evaluateAll,
   scoreHourly: scoreHourly,
+  summarizeSpot: summarizeSpot,
   scoreToStars: scoreToStars,
   starString: starString,
+  starWidths: starWidths,
   STAR_LABELS: STAR_LABELS,
   mergeTimeRanges: mergeTimeRanges,
   buildAdvice: buildAdvice,

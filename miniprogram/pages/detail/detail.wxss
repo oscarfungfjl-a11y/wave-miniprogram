@@ -26,6 +26,46 @@
   color: #1D9E75;
 }
 
+/* ── 半星图标容器 ── */
+.stars-container {
+  display: flex;
+  gap: 8rpx;
+  font-size: 36rpx;
+  color: #1D9E75;
+}
+
+.star-item {
+  position: relative;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+}
+
+.star-empty {
+  position: absolute;
+  left: 0;
+  top: 0;
+  line-height: 1;
+  color: #D0D5DD;
+}
+
+.star-full-wrap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+.star-full {
+  position: absolute;
+  left: 0;
+  top: 0;
+  line-height: 1;
+  color: #1D9E75;
+}
+
 .rec-star-label {
   font-size: 28rpx;
   font-weight: 500;
@@ -80,9 +120,9 @@
 }
 
 .star-bg-5 { background: rgba(29,158,117,0.12); color: #0F6E56; }
-.star-bg-4 { background: rgba(29,158,117,0.12); color: #0F6E56; }
+.star-bg-4 { background: rgba(55,138,221,0.12); color: #1A5FB4; }
 .star-bg-3 { background: rgba(186,117,23,0.12); color: #854F0B; }
-.star-bg-2 { background: rgba(136,135,128,0.12); color: #5F5E5A; }
+.star-bg-2 { background: rgba(205,92,92,0.12); color: #8B2E2E; }
 .star-bg-1 { background: rgba(136,135,128,0.12); color: #5F5E5A; }
 
 /* ── 小时预报表格 ── */
@@ -140,8 +180,9 @@
 .h-th-time, .h-td-time { width: 76rpx; text-align: left; color: #8A9BAC; padding-left: 4rpx; }
 .h-th-wave, .h-td-wave { width: 84rpx; text-align: right; padding-right: 8rpx; font-weight: 500; }
 .h-th-per, .h-td-per { width: 72rpx; text-align: right; padding-right: 8rpx; color: #5A6B7C; }
-.h-th-dir, .h-td-dir { width: 80rpx; text-align: center; }
-.h-th-temp, .h-td-temp { width: 72rpx; text-align: right; padding-right: 8rpx; color: #5A6B7C; }
+
+.h-th-wind, .h-td-wind { width: 72rpx; text-align: right; padding-right: 8rpx; color: #5A6B7C; }
+.h-th-wind-speed, .h-td-wind-speed { width: 88rpx; text-align: right; padding-right: 8rpx; color: #5A6B7C; }
 .h-th-tide, .h-td-tide { width: 88rpx; text-align: right; padding-right: 8rpx; color: #5A6B7C; }
 .h-th-pts, .h-td-pts { width: 56rpx; text-align: right; padding-right: 4rpx; font-weight: 500; }
 

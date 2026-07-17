@@ -85,6 +85,8 @@ Page({
           stars: stars,
           starLabel: recommender.STAR_LABELS[stars],
           starStr: recommender.starString(stars),
+          starLevel: stars >= 4.5 ? 5 : stars >= 3.5 ? 4 : stars >= 2.5 ? 3 : stars >= 1.5 ? 2 : 1,
+          starWidths: recommender.starWidths(stars),
           timeRange: recommender.mergeTimeRanges(
             scored.filter(function (s) { return s.stars >= 4; }).map(function (s) { return s.time; })
           ),
@@ -107,7 +109,9 @@ Page({
             wave_height_m: h.wave_height_m,
             swell_period_s: h.swell_period_s,
             wave_direction_cn: h.wave_direction_cn,
-            sea_temp_c: h.sea_temp_c,
+            wind_direction_cn: h.wind_direction_cn,
+            wind_speed_kmh: h.wind_speed_kmh,
+            windType: s ? s.windType : '--',
             sea_level_m: h.sea_level_m,
             recScore: s ? s.totalScore : null,
             recStars: s ? s.stars : null,
@@ -122,7 +126,9 @@ Page({
             wave_height_m: h.wave_height_m,
             swell_period_s: h.swell_period_s,
             wave_direction_cn: h.wave_direction_cn,
-            sea_temp_c: h.sea_temp_c,
+            wind_direction_cn: h.wind_direction_cn,
+            wind_speed_kmh: h.wind_speed_kmh,
+            windType: '--',
             sea_level_m: h.sea_level_m,
             recScore: null,
             recStars: null,
@@ -167,22 +173,26 @@ Page({
               wave_height_m: h.wave_height_m,
               swell_period_s: h.swell_period_s,
               wave_direction_cn: h.wave_direction_cn,
-              sea_temp_c: h.sea_temp_c,
-              sea_level_m: h.sea_level_m,
-              recScore: s ? s.totalScore : null,
-              recStars: s ? s.stars : null,
-            };
-          });
-        } else {
-          dayHours = rawHours.map(function (h) {
-            return {
-              time: h.time,
-              time_label: h.time_label,
-              wave_height_m: h.wave_height_m,
-              swell_period_s: h.swell_period_s,
-              wave_direction_cn: h.wave_direction_cn,
-              sea_temp_c: h.sea_temp_c,
-              sea_level_m: h.sea_level_m,
+            wind_direction_cn: h.wind_direction_cn,
+            wind_speed_kmh: h.wind_speed_kmh,
+            windType: s ? s.windType : '--',
+            sea_level_m: h.sea_level_m,
+            recScore: s ? s.totalScore : null,
+            recStars: s ? Math.floor(s.stars) : null,
+          };
+        });
+      } else {
+        dayHours = rawHours.map(function (h) {
+          return {
+            time: h.time,
+            time_label: h.time_label,
+            wave_height_m: h.wave_height_m,
+            swell_period_s: h.swell_period_s,
+            wave_direction_cn: h.wave_direction_cn,
+            wind_direction_cn: h.wind_direction_cn,
+            wind_speed_kmh: h.wind_speed_kmh,
+            windType: '--',
+            sea_level_m: h.sea_level_m,
               recScore: null,
               recStars: null,
             };

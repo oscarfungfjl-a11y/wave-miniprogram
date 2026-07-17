@@ -4,87 +4,119 @@
     <text class="section-title">打分体系</text>
     <view class="card">
       <view class="formula-box">
-        <text class="formula-text">四维打分（浪向 + 浪高 + 周期 + 潮汐）→ 星级映射</text>
+        <text class="formula-text">五维打分（周期 + 浪高 + 风向 + 潮汐 + 浪向）→ 星级映射</text>
       </view>
       <view class="tier-row">
         <view class="star-tier star-tier-5">★★★★★</view>
+        <text class="tier-desc">高推荐（≥90分）</text>
+      </view>
+      <view class="tier-row">
+        <view class="star-tier star-tier-4">★★★★½</view>
         <text class="tier-desc">高推荐（≥80分）</text>
       </view>
       <view class="tier-row">
         <view class="star-tier star-tier-4">★★★★☆</view>
-        <text class="tier-desc">推荐（≥63分）</text>
+        <text class="tier-desc">推荐（≥70分）</text>
+      </view>
+      <view class="tier-row">
+        <view class="star-tier star-tier-3">★★★½☆</view>
+        <text class="tier-desc">推荐（≥60分）</text>
       </view>
       <view class="tier-row">
         <view class="star-tier star-tier-3">★★★☆☆</view>
-        <text class="tier-desc">一般（≥45分）</text>
+        <text class="tier-desc">一般（≥50分）</text>
+      </view>
+      <view class="tier-row">
+        <view class="star-tier star-tier-2">★★½☆☆</view>
+        <text class="tier-desc">一般（≥40分）</text>
       </view>
       <view class="tier-row">
         <view class="star-tier star-tier-2">★★☆☆☆</view>
-        <text class="tier-desc">较差（≥25分）</text>
+        <text class="tier-desc">较差（≥30分）</text>
+      </view>
+      <view class="tier-row">
+        <view class="star-tier star-tier-1">★½☆☆☆</view>
+        <text class="tier-desc">较差（≥20分）</text>
       </view>
       <view class="tier-row">
         <view class="star-tier star-tier-1">★☆☆☆☆</view>
-        <text class="tier-desc">不推荐（&lt;25分）</text>
+        <text class="tier-desc">不推荐（&lt;20分）</text>
       </view>
       <view class="note-box mt-16">
-        <text class="text-xs text-secondary">四维均采用三点线性插值算法，确保分数平滑过渡。理论满分94分（浪向28 + 浪高28 + 周期23 + 潮汐15）。</text>
+        <text class="text-xs text-secondary">五维均采用三点线性插值算法，确保分数平滑过渡。理论满分100分（周期40 + 浪高30 + 风向10 + 潮汐10 + 浪向10）。参考 Magicseaweed 专业冲浪预报的评估逻辑。</text>
       </view>
     </view>
   </view>
 
   <!-- 维度详解 -->
   <view class="section">
-    <text class="section-title">四维详解</text>
+    <text class="section-title">五维详解</text>
 
-    <!-- 维度1: 浪向 -->
+    <!-- 维度1: 周期 -->
     <view class="card dim-card">
       <view class="dim-header">
-        <view class="dim-badge dim-badge-dir">28分</view>
-        <text class="dim-title">浪向适配 — 定生死</text>
+        <view class="dim-badge dim-badge-swell">40分</view>
+        <text class="dim-title">涌浪周期 — 定品质（最重要）</text>
       </view>
-      <text class="text-sm dim-desc">浪向是"能不能冲"的底线。各浪点根据海岸线朝向配置了方向偏好规则。</text>
+      <text class="text-sm dim-desc">周期越长，浪的能量越强、越整齐。参考 Magicseaweed，周期是冲浪预报的核心指标。3 锚点线性插值。</text>
       <view class="dim-detail">
-        <text class="text-xs text-secondary">浪向按 8 个方向组分类：北/东北/东/东南/南/西南/西/西北。采用字符串精确匹配逐条规则，分值不插值。</text>
-      </view>
-      <view class="dim-example-box">
-        <text class="dim-example-title">示例：LOOP 浪点（东岸）</text>
-        <text class="text-xs text-secondary">东 / 东南 → 28 分 | 东北 → 20 分 | 南 / 北 → 10 分 | 西 / 西南 / 西北 → 0 分</text>
+        <text class="text-xs text-secondary">通用锚点：≥10s → 40 分 | 7s → 25 分 | 5s → 10 分。高洋尾要求更高（≥12s 满分），万科/情人岛要求更低（≥8s 满分）。</text>
       </view>
     </view>
 
     <!-- 维度2: 浪高 -->
     <view class="card dim-card mt-12">
       <view class="dim-header">
-        <view class="dim-badge dim-badge-wave">28分</view>
+        <view class="dim-badge dim-badge-wave">30分</view>
         <text class="dim-title">浪高匹配 — 定门槛</text>
       </view>
       <text class="text-sm dim-desc">各浪点设独立阈值，三点线性插值确保分数平滑过渡。</text>
       <view class="dim-detail">
-        <text class="text-xs text-secondary">每个浪点有 4 个锚点 [浪高, 得分]，如 LOOP：[0.6m→28, 1.5m→28, 2.0m→10, 3.0m→0]。阈值之间的区间线性插值。例如 1.8m 浪高在 1.5m→2.0m 之间，线性插值 ≈ 19 分。</text>
+        <text class="text-xs text-secondary">每个浪点有 4 个锚点 [浪高, 得分]，如 LOOP：[0.6m→0, 0.6m→30, 1.5m→30, 2.0m→10, 3.0m→0]。阈值之间的区间线性插值。例如 1.8m 浪高在 1.5m→2.0m 之间，线性插值 ≈ 22 分。</text>
       </view>
     </view>
 
-    <!-- 维度3: 周期 -->
+    <!-- 维度3: 风向 -->
     <view class="card dim-card mt-12">
       <view class="dim-header">
-        <view class="dim-badge dim-badge-swell">23分</view>
-        <text class="dim-title">涌浪周期 — 定品质</text>
+        <view class="dim-badge dim-badge-wind">10分</view>
+        <text class="dim-title">风向 — 定浪面</text>
       </view>
-      <text class="text-sm dim-desc">周期越长，浪的能量越强、越整齐。3 锚点线性插值。</text>
+      <text class="text-sm dim-desc">参考 Magicseaweed，风向对冲浪体验至关重要。离岸风（从陆地吹向海洋）让浪面干净整齐，迎岸风（从海洋吹向陆地）让浪面破碎杂乱。</text>
       <view class="dim-detail">
-        <text class="text-xs text-secondary">通用锚点：≥10s → 23 分 | 7s → 15 分 | 5s → 5 分。高洋尾要求更高（≥12s 满分），万科/情人岛要求更低（≥8s 满分）。</text>
+        <text class="text-xs text-secondary">离岸风 → 10 分（满分）| 侧风 → 6 分 | 迎岸风 → 2 分。再结合风速修正：≤10km/h 不扣分，10-20km/h 轻微扣分，20-30km/h 明显扣分，>30km/h 严重扣分。</text>
+      </view>
+      <view class="dim-example-box">
+        <text class="dim-example-title">示例：东岸浪点（如 LOOP）</text>
+        <text class="text-xs text-secondary">离岸风：西 / 西北 / 西南 → 10 分 | 迎岸风：东 / 东南 / 东北 → 2 分</text>
       </view>
     </view>
 
     <!-- 维度4: 潮汐 -->
     <view class="card dim-card mt-12">
       <view class="dim-header">
-        <view class="dim-badge dim-badge-tide">15分</view>
+        <view class="dim-badge dim-badge-tide">10分</view>
         <text class="dim-title">潮汐适配 — 定时机</text>
       </view>
       <text class="text-sm dim-desc">基于海平面高度相对于当日均值的偏离度。数据来源：Open-Meteo sea_level_height_msl（含潮汐成分）。</text>
       <view class="dim-detail">
-        <text class="text-xs text-secondary">算法：① 计算当日海平面均值/最大值/最小值 → ② 将当前小时海平面归一化到 [-1, 1] → ③ 映射得分 = 7.5 + normalized × 7.5（范围 0–15 分）。高于日均值（涨潮/高潮）→ 高分，低于日均值（低潮）→ 低分。无数据或潮差极小时默认 8 分。</text>
+        <text class="text-xs text-secondary">算法：① 计算当日海平面均值/最大值/最小值 → ② 将当前小时海平面归一化到 [-1, 1] → ③ 映射得分 = 5 + normalized × 5（范围 0–10 分）。高于日均值（涨潮/高潮）→ 高分，低于日均值（低潮）→ 低分。无数据或潮差极小时默认 5 分。</text>
+      </view>
+    </view>
+
+    <!-- 维度5: 浪向 -->
+    <view class="card dim-card mt-12">
+      <view class="dim-header">
+        <view class="dim-badge dim-badge-dir">10分</view>
+        <text class="dim-title">浪向适配 — 定浪点</text>
+      </view>
+      <text class="text-sm dim-desc">浪向决定哪些浪点有浪。各浪点根据海岸线朝向配置了方向偏好规则。</text>
+      <view class="dim-detail">
+        <text class="text-xs text-secondary">浪向按 8 个方向组分类：北/东北/东/东南/南/西南/西/西北。采用字符串精确匹配逐条规则，分值不插值。</text>
+      </view>
+      <view class="dim-example-box">
+        <text class="dim-example-title">示例：LOOP 浪点（东岸）</text>
+        <text class="text-xs text-secondary">东 / 东南 → 10 分 | 东北 → 7 分 | 南 / 北 → 4 分 | 西 / 西南 / 西北 → 0 分</text>
       </view>
     </view>
 
@@ -92,13 +124,13 @@
     <view class="card mt-12">
       <text class="ref-subtitle">权重设计逻辑</text>
       <view class="weight-explain">
-        <text class="text-sm">浪向 28 + 浪高 28 = <text class="ref-link">能不能冲</text>（合计最高56分，底线条件）</text>
+        <text class="text-sm">涌浪周期 40 + 浪高 30 = <text class="ref-link">浪况好不好</text>（合计70分，决定能不能冲、冲得爽不爽）</text>
       </view>
       <view class="weight-explain">
-        <text class="text-sm">涌浪周期 23 = <text class="ref-link">好不好</text>（品质调节）</text>
+        <text class="text-sm">风向 10 + 浪向 10 = <text class="ref-link">浪面与浪点适配</text>（合计20分，浪面干不干净、哪个浪点有浪）</text>
       </view>
       <view class="weight-explain">
-        <text class="text-sm">潮汐 15 = <text class="ref-link">什么时段去</text>（时机优化）</text>
+        <text class="text-sm">潮汐 10 = <text class="ref-link">什么时段去</text>（时机优化）</text>
       </view>
     </view>
   </view>
@@ -110,15 +142,15 @@
       <view class="flow-step">
         <view class="flow-num">1</view>
         <view class="flow-body">
-          <text class="ref-source-title">逐小时四维打分</text>
-          <text class="text-xs text-secondary">对每个浪点的每小时数据，分别计算浪向、浪高、周期、潮汐四维得分，求和得到该小时总分（0–94）。</text>
+          <text class="ref-source-title">逐小时五维打分</text>
+          <text class="text-xs text-secondary">对每个浪点的每小时数据，分别计算周期、浪高、风向、潮汐、浪向五维得分，求和得到该小时总分（0–100）。参考 Magicseaweed 冲浪预报逻辑，风向（离岸/迎岸）作为独立维度纳入评分。</text>
         </view>
       </view>
       <view class="flow-step">
         <view class="flow-num">2</view>
         <view class="flow-body">
           <text class="ref-source-title">取最高分定挡位</text>
-          <text class="text-xs text-secondary">取当日所有小时中的最高分，映射为星级：≥80 → 5★高推荐 / ≥63 → 4★推荐 / ≥45 → 3★一般 / ≥25 → 2★较差 / &lt;25 → 1★不推荐。</text>
+          <text class="text-xs text-secondary">取当日所有小时中的最高分，映射为星级：≥90→5.0★高推荐 / ≥80→4.5★ / ≥70→4.0★推荐 / ≥60→3.5★ / ≥50→3.0★一般 / ≥40→2.5★ / ≥30→2.0★较差 / ≥20→1.5★ / &lt;20→1.0★不推荐。</text>
         </view>
       </view>
       <view class="flow-step">
@@ -166,6 +198,10 @@
         <view class="info-row">
           <text class="info-label">周期阈值</text>
           <text class="info-val text-sm">{{item.swellRanges}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">风向规则</text>
+          <text class="info-val text-sm">{{item.windRules}}</text>
         </view>
         <view class="info-row">
           <text class="info-label">潮汐偏好</text>

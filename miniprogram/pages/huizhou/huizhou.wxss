@@ -310,22 +310,22 @@
   background: rgba(29,158,117,0.12);
   color: #0F6E56;
 }
-/* 推荐 (4★) → teal */
+/* 推荐 (4★) → blue */
 .star-bg-4 {
-  background: rgba(29,158,117,0.12);
-  color: #0F6E56;
+  background: rgba(55,138,221,0.12);
+  color: #1A5FB4;
 }
 /* 中推荐 (3★) → amber */
 .star-bg-3 {
   background: rgba(186,117,23,0.12);
   color: #854F0B;
 }
-/* 弱 (2★) → gray */
+/* 较差 (2★) → rose */
 .star-bg-2 {
-  background: rgba(136,135,128,0.12);
-  color: #5F5E5A;
+  background: rgba(205,92,92,0.12);
+  color: #8B2E2E;
 }
-/* 弱 (1★) → gray */
+/* 不推荐 (1★) → gray */
 .star-bg-1 {
   background: rgba(136,135,128,0.12);
   color: #5F5E5A;
@@ -337,7 +337,7 @@
 }
 
 /* ── 星级展示 ── */
-/* 设计规范：绿色星 #1D9E75、36rpx、8rpx间距 */
+/* 设计规范：绿色星 #1D9E75、32rpx、8rpx间距 */
 .top-score-row {
   margin-bottom: 24rpx;
 }
@@ -347,6 +347,46 @@
   font-weight: 400;
   line-height: 1;
   letter-spacing: 0.08em;
+  color: #1D9E75;
+}
+
+/* ── 半星图标容器 ── */
+.stars-container {
+  display: flex;
+  gap: 8rpx;
+  font-size: 32rpx;
+  color: #1D9E75;
+}
+
+.star-item {
+  position: relative;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+}
+
+.star-empty {
+  position: absolute;
+  left: 0;
+  top: 0;
+  line-height: 1;
+  color: #D0D5DD;
+}
+
+.star-full-wrap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+.star-full {
+  position: absolute;
+  left: 0;
+  top: 0;
+  line-height: 1;
   color: #1D9E75;
 }
 
@@ -379,7 +419,7 @@
   background: #E1F5EE;
 }
 
-.metric-col-tide {
+.metric-col-wind {
   background: #EEEDFE;
 }
 
@@ -397,7 +437,7 @@
 
 .metric-val-wave { color: #378ADD; }
 .metric-val-swell { color: #1D9E75; }
-.metric-val-tide { color: #534AB7; }
+.metric-val-wind { color: #534AB7; }
 
 /* ── 最佳时段 ── */
 .top-time {

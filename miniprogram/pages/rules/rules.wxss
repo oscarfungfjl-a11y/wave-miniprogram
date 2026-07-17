@@ -165,6 +165,7 @@
 .dim-badge-dir { background: linear-gradient(135deg, #378ADD, #1A5FA8); }
 .dim-badge-wave { background: linear-gradient(135deg, #1D9E75, #15785A); }
 .dim-badge-swell { background: linear-gradient(135deg, #BA7517, #9E6412); }
+.dim-badge-wind { background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
 .dim-badge-tide { background: linear-gradient(135deg, #534AB7, #4139A0); }
 
 .dim-title {
