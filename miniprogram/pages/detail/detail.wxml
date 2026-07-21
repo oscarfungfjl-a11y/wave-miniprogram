@@ -17,8 +17,16 @@
   <block wx:else>
     <!-- 浪点基本信息 -->
     <view class="section">
-      <view class="spot-title">{{spot.name}}</view>
-      <view class="spot-meta text-sm text-secondary">{{spot.region}} · {{spot.description}}</view>
+      <view class="spot-header">
+        <view class="spot-header-text">
+          <view class="spot-title">{{spot.name}}</view>
+          <view class="spot-meta text-sm text-secondary">{{spot.region}} · {{spot.description}}</view>
+        </view>
+        <view class="nav-btn" bindtap="onOpenNavigation" hover-class="nav-btn-hover">
+          <text class="nav-btn-icon">🧭</text>
+          <text class="nav-btn-label">导航</text>
+        </view>
+      </view>
     </view>
 
     <!-- 今日推荐评分（有规则时）/ 浪况概览（无规则时） -->

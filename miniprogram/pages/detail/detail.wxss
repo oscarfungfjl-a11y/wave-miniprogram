@@ -11,6 +11,51 @@
   margin-top: 8rpx;
 }
 
+/* ── 顶部浪点信息行：左侧文字 + 右侧导航按钮 ── */
+.spot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.spot-header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.nav-btn {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 104rpx;
+  height: 104rpx;
+  border-radius: 24rpx;
+  background: linear-gradient(135deg, #378ADD 0%, #2A6FBF 100%);
+  box-shadow:
+    0 4rpx 16rpx rgba(55,138,221,0.32),
+    inset 0 1rpx 0 rgba(255,255,255,0.4);
+}
+
+.nav-btn-hover {
+  background: linear-gradient(135deg, #2A6FBF 0%, #1E5AA0 100%);
+}
+
+.nav-btn-icon {
+  font-size: 36rpx;
+  line-height: 1;
+}
+
+.nav-btn-label {
+  margin-top: 4rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+}
+
 /* ── 推荐摘要卡片 ── */
 .rec-score-hero {
   display: flex;

@@ -86,7 +86,7 @@ function dirScore(actualDir, rules) {
 
 var SPOT_SCORING = {
   'huizhou-loop': {
-    name: 'LOOP浪点',
+    name: 'LOOP',
     area: '东岸',
     level: '全水平通用', bottom: '纯沙底安全浪点',
     videoCid: 3,
@@ -105,7 +105,7 @@ var SPOT_SCORING = {
     tideNote: '涨潮/高潮最佳',
   },
   'huizhou-qingrendao': {
-    name: '情人岛浪点',
+    name: '情人岛',
     area: '东岸',
     level: '新手入门', bottom: '平缓沙底',
     videoCid: 67,
@@ -123,7 +123,7 @@ var SPOT_SCORING = {
     tideNote: '中潮-高潮段最佳',
   },
   'huizhou-honghaiwan': {
-    name: '虹海湾（山海里）浪点',
+    name: '山海里',
     area: '东岸',
     level: '入门-进阶', bottom: '牛奶浪特色',
     videoCid: 54,
@@ -141,7 +141,7 @@ var SPOT_SCORING = {
     tideNote: '涨潮期-高潮最佳',
   },
   'huizhou-gaoyangwei': {
-    name: '高洋尾浪点',
+    name: '高洋尾',
     area: '东岸',
     level: '进阶-资深', bottom: '礁石旁强力浪点',
     videoCid: 1,
@@ -159,7 +159,7 @@ var SPOT_SCORING = {
     tideNote: '中潮-高潮（礁石淹没无风险）',
   },
   'huizhou-wanke': {
-    name: '万科沙滩浪点',
+    name: '万科一期沙滩',
     area: '西岸',
     level: '纯新手·亲子', bottom: '内湾平缓浪点',
     videoCid: 53,
@@ -177,7 +177,7 @@ var SPOT_SCORING = {
     tideNote: '中潮-高潮最佳',
   },
   'huizhou-shizidao': {
-    name: '狮子岛浪点',
+    name: '狮子岛',
     area: '西岸',
     level: '入门-进阶', bottom: '西岸优质浪点',
     videoCid: 2,
@@ -193,6 +193,24 @@ var SPOT_SCORING = {
       onshore: ['西', '西南', '南'],
     },
     tideNote: '涨潮-高潮段最佳',
+  },
+  'huizhou-tiancheng': {
+    name: '甜橙',
+    area: '东岸',
+    level: '入门-进阶', bottom: '东湾沙滩浪点',
+    videoCid: 63,
+    dirRules: [
+      { dirs: ['东', '东南'], score: 10 },
+      { dirs: ['东北', '南'], score: 6 },
+      { dirs: ['西', '西南', '西北', '北'], score: 0 },
+    ],
+    waveRanges: [[0.8, 0], [0.8, 30], [1.8, 30], [2.2, 10], [3.0, 0]],
+    swellRanges: [[10, 40], [7, 25], [5, 10]],
+    windRules: {
+      offshore: ['西', '西北', '北西北'],
+      onshore: ['东', '东南', '南东南'],
+    },
+    tideNote: '涨潮期-高潮最佳',
   },
 };
 

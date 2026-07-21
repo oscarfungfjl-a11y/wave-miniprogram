@@ -4,6 +4,7 @@
 const { getSpotById } = require('../../data/spots');
 const { fetchWaveData } = require('../../services/wave-fetcher');
 const recommender = require('../../services/huizhou-recommender');
+const { wgs84ToGcj02, wgs84ToBd09 } = require('../../utils/coord');
 
 var WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 
@@ -222,5 +223,85 @@ Page({
     this.setData({ loading: true, errorMsg: '' });
     var s = this.data.spot;
     this.loadWaveData(s.lat, s.lon, s.id);
+  },
+
+  /**
+   * 拉起第三方导航 App
+   * 1) 优先 wx.openLocation（系统地图选择器，唤起已安装的地图App）
+   * 2) 失败时弹出操作表：选择高德/百度/腾讯地图，复制对应 URL 到剪贴板并提示
+   */
+  onOpenNavigation: function () {
+    var spot = this.data.spot;
+    if (!spot) return;
+
+    var name = spot.name;
+    var address = spot.region || '';
+
+    // spots.js 中的坐标是 WGS-84（Open-Meteo API 返回）
+    // 需要转换为国内地图支持的坐标系：
+    // - wx.openLocation / 高德地图 / 腾讯地图 → GCJ-02（火星坐标）
+    // - 百度地图 → BD-09（百度坐标）
+    var gcj = wgs84ToGcj02(spot.lat, spot.lon);
+    var bd = wgs84ToBd09(spot.lat, spot.lon);
+
+    var mapUrls = {
+      gaode: 'https://uri.amap.com/marker?position=' + gcj.lon + ',' + gcj.lat
+        + '&name=' + encodeURIComponent(name)
+        + '&src=mavis&coordinate=gaode&callnative=1',
+      baidu: 'https://api.map.baidu.com/marker?location=' + bd.lat + ',' + bd.lon
+        + '&title=' + encodeURIComponent(name)
+        + '&content=' + encodeURIComponent(address)
+        + '&coord_type=bd09ll&output=html&src=mavis',
+      tencent: 'https://apis.map.qq.com/uri/v1/marker?marker=coord:' + gcj.lat + ',' + gcj.lon
+        + ';title:' + encodeURIComponent(name)
+        + ';addr:' + encodeURIComponent(address)
+        + '&referer=mavis'
+    };
+
+    var that = this;
+
+    wx.openLocation({
+      latitude: gcj.lat,
+      longitude: gcj.lon,
+      name: name,
+      address: address,
+      scale: 16,
+      fail: function () {
+        that._showMapActionSheet(mapUrls, gcj.lat, gcj.lon, name);
+      }
+    });
+  },
+
+  _showMapActionSheet: function (mapUrls, lat, lon, name) {
+    var that = this;
+    wx.showActionSheet({
+      itemList: ['高德地图', '百度地图', '腾讯地图', '复制坐标'],
+      success: function (res) {
+        var idx = res.tapIndex;
+        if (idx === 0) return that._copyAndOpen(mapUrls.gaode, lat, lon, name);
+        if (idx === 1) return that._copyAndOpen(mapUrls.baidu, lat, lon, name);
+        if (idx === 2) return that._copyAndOpen(mapUrls.tencent, lat, lon, name);
+        // 复制坐标（提供两种：WGS-84 用于 API，GCJ-02 用于地图搜索）
+        wx.setClipboardData({
+          data: lat + ', ' + lon + ' (' + name + ')',
+          success: function () { wx.showToast({ title: '坐标已复制', icon: 'success' }); }
+        });
+      }
+    });
+  },
+
+  _copyAndOpen: function (url, lat, lon, name) {
+    wx.setClipboardData({
+      data: url,
+      success: function () {
+        wx.showModal({
+          title: '打开 ' + name,
+          content: '导航链接已复制到剪贴板。\n坐标：' + lat + ', ' + lon
+            + '\n\n请在手机浏览器粘贴打开，将自动唤起地图 App。',
+          confirmText: '我知道了',
+          showCancel: false
+        });
+      }
+    });
   },
 });

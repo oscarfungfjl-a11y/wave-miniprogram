@@ -21,28 +21,33 @@ const SPOTS = [
   },
   {
     id: 'huizhou-gaoyangwei', name: '高洋尾', region: '广东惠州',
-    lat: 22.555, lon: 114.91,
+    lat: 22.65, lon: 114.94,
     description: '港口镇南侧东向海滩',
   },
   {
     id: 'huizhou-qingrendao', name: '情人岛', region: '广东惠州',
-    lat: 22.55, lon: 114.86,
+    lat: 22.64, lon: 114.93,
     description: '平海镇黑排角情人岛',
   },
   {
-    id: 'huizhou-honghaiwan', name: '虹海湾', region: '广东惠州',
-    lat: 22.593, lon: 114.9,
-    description: '惠州虹海湾',
+    id: 'huizhou-honghaiwan', name: '山海里', region: '广东惠州',
+    lat: 22.61, lon: 114.91,
+    description: '惠州山海里',
   },
   {
-    id: 'huizhou-wanke', name: '万科', region: '广东惠州',
-    lat: 22.597, lon: 114.878,
-    description: '万科双月湾（Lunas Del Mar）',
+    id: 'huizhou-wanke', name: '万科一期', region: '广东惠州',
+    lat: 22.60, lon: 114.89,
+    description: '万科双月湾一期（Lunas Del Mar）',
   },
   {
     id: 'huizhou-shizidao', name: '狮子岛', region: '广东惠州',
     lat: 22.598, lon: 114.842,
     description: '纬度与夏威夷相同，日落美景出众',
+  },
+  {
+    id: 'huizhou-tiancheng', name: '甜橙', region: '广东惠州',
+    lat: 22.61, lon: 114.91,
+    description: '双月湾东湾甜橙冲浪俱乐部',
   },
   {
     id: 'shanwei-honghaiwan', name: '红海湾（遮浪半岛）', region: '广东汕尾',
