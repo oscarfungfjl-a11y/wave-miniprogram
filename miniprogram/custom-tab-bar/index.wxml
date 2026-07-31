@@ -1,18 +1,21 @@
-<view class="tab-bar">
-  <view
-    class="tab-item {{selected === index ? 'active' : ''}}"
-    wx:for="{{list}}"
-    wx:key="pagePath"
-    data-index="{{index}}"
-    data-path="{{item.pagePath}}"
-    bindtap="switchTab"
-  >
-    <view class="tab-highlight">
-      <t-icon
-        name="{{item.icon}}"
-        size="40rpx"
-        color="{{selected === index ? '#378ADD' : '#9A9BAC'}}"
-      />
+<view class="tab-bar-wrapper">
+  <view class="tab-bar-shadow"></view>
+  <view class="tab-bar">
+    <view
+      class="tab-item {{selected === index ? 'active' : ''}}"
+      wx:for="{{list}}"
+      wx:key="pagePath"
+      data-index="{{index}}"
+      data-path="{{item.pagePath}}"
+      bindtap="switchTab"
+    >
+      <view class="tab-highlight">
+        <t-icon
+          name="{{item.icon}}"
+          size="40rpx"
+          color="{{selected === index ? '#378ADD' : '#9A9BAC'}}"
+        />
+      </view>
     </view>
   </view>
 </view>

@@ -22,19 +22,35 @@
       <!-- 今天冲浪建议 -->
       <view class="advice-section">
         <text class="advice-section-title">今天冲浪建议</text>
-        <text class="text-sm advice-content">{{todayAdvice || '暂无建议'}}</text>
+        <block wx:if="{{todayAdvice.hasRec}}">
+          <view class="advice-rec-groups">
+            <view class="advice-group-row" wx:for="{{todayAdvice.groups}}" wx:key="stars">
+              <view class="advice-group-badge star-bg-{{item.starLevel}}">
+                <text>{{item.starLabel}}</text>
+                <text class="advice-badge-stars">{{item.stars}}★</text>
+              </view>
+              <view class="advice-group-names">
+                <text class="advice-name-tag" wx:for="{{item.namesArr}}" wx:for-item="n" wx:key="*this">{{n}}</text>
+              </view>
+            </view>
+          </view>
+        </block>
+        <text wx:else class="text-sm advice-empty">今天无推荐冲浪点</text>
       </view>
 
       <!-- 未来7天冲浪建议 -->
-      <view class="advice-section" wx:if="{{weekRecommendations.length > 0}}">
+      <view class="advice-section">
         <text class="advice-section-title">未来7天最佳日期</text>
-        <view class="week-recs">
-          <view class="week-rec-item" wx:for="{{weekRecommendations}}" wx:key="date" bindtap="onWeekRecTap" data-date="{{item.date}}">
-            <text class="week-rec-weekday">{{item.weekday}}</text>
-            <text class="week-rec-date">{{item.dateLabel}}</text>
-            <text class="week-rec-score">{{item.scoreLabel}}</text>
+        <block wx:if="{{weekRecommendations.length > 0}}">
+          <view class="week-recs">
+            <view class="week-rec-item" wx:for="{{weekRecommendations}}" wx:key="date" bindtap="onWeekRecTap" data-date="{{item.date}}">
+              <text class="week-rec-weekday">{{item.weekday}}</text>
+              <text class="week-rec-date">{{item.dateLabel}}</text>
+              <text class="week-rec-score">{{item.scoreLabel}}</text>
+            </view>
           </view>
-        </view>
+        </block>
+        <text wx:else class="text-sm advice-content">无推荐日期（未来7天评分均未达到80分）</text>
       </view>
     </view>
 

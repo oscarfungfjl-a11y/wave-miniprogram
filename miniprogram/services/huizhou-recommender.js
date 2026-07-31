@@ -481,96 +481,133 @@ function summarizeSpot(spotId, scores) {
 
 /**
  * 评估所有浪点，返回排序后的汇总
+ * @param {Object} spotData - 各浪点专属数据 { spotId: { daily, hourly }, ... }
+ * @param {string} targetDate - 目标日期 'YYYY-MM-DD'
+ * @param {number} dayTemp - 当日水温
+ * @param {Object} options - 可选参数 { startHour, endHour }
  */
-function evaluateAll(hourlyData, waterTemp) {
-  var seaLevels = [];
-  for (var i = 0; i < hourlyData.length; i++) {
-    if (hourlyData[i].sea_level_m != null) {
-      seaLevels.push(hourlyData[i].sea_level_m);
-    }
-  }
-  var dailySeaMean = seaLevels.length > 0
-    ? seaLevels.reduce(function (a, b) { return a + b; }, 0) / seaLevels.length
-    : null;
-  var dailySeaMax = seaLevels.length > 0
-    ? Math.max.apply(null, seaLevels)
-    : null;
-  var dailySeaMin = seaLevels.length > 0
-    ? Math.min.apply(null, seaLevels)
-    : null;
+function evaluateAll(spotData, targetDate, dayTemp, options) {
+  var startHour = options && options.startHour != null ? options.startHour : 0;
+  var endHour = options && options.endHour != null ? options.endHour : 23;
 
-  var spotIds = Object.keys(SPOT_SCORING);
-  var summaries = [];
+  var allSummaries = [];
+  var spotIds = Object.keys(spotData);
 
   for (var i = 0; i < spotIds.length; i++) {
-    var id = spotIds[i];
-    var scores = scoreHourly(id, hourlyData, dailySeaMean, dailySeaMax, dailySeaMin);
-    var summary = summarizeSpot(id, scores);
-    summary.waterTemp = waterTemp;
-    summaries.push(summary);
+    var sid = spotIds[i];
+    var sd = spotData[sid];
+    if (!sd || !sd.hourly) continue;
+
+    var targetHourly = sd.hourly.filter(function (h) {
+      if (h.time.slice(0, 10) !== targetDate) return false;
+      var hour = parseInt(h.time.slice(11, 13));
+      return hour >= startHour && hour <= endHour;
+    });
+
+    var seaLevels = [];
+    for (var k = 0; k < targetHourly.length; k++) {
+      if (targetHourly[k].sea_level_m != null) seaLevels.push(targetHourly[k].sea_level_m);
+    }
+    var dailySeaMean = seaLevels.length > 0
+      ? seaLevels.reduce(function (a, b) { return a + b; }, 0) / seaLevels.length
+      : null;
+    var dailySeaMax = seaLevels.length > 0
+      ? Math.max.apply(null, seaLevels)
+      : null;
+    var dailySeaMin = seaLevels.length > 0
+      ? Math.min.apply(null, seaLevels)
+      : null;
+
+    var scores = scoreHourly(sid, targetHourly, dailySeaMean, dailySeaMax, dailySeaMin);
+    var summary = summarizeSpot(sid, scores);
+    summary.waterTemp = dayTemp;
+    allSummaries.push(summary);
   }
 
-  summaries.sort(function (a, b) { return b.bestScore - a.bestScore; });
-  return summaries;
+  allSummaries.sort(function (a, b) { return b.bestScore - a.bestScore; });
+  return allSummaries;
 }
 
 /**
- * 生成自然语言建议
+ * 构建未来7天推荐列表
+ * @param {Object} spotData - 各浪点专属数据 { spotId: { daily, hourly }, ... }
+ * @returns {Array} - 评分≥80的日期列表，按评分降序排列
  */
-function buildAdvice(summaries, todayWaveH, todaySwell, todayTemp, todayWindSpeed, todayWindDir) {
-  if (summaries.length === 0) return '暂无数据';
+function buildWeekRecommendations(spotData) {
+  var weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+  var dayScores = [];
+
+  var firstId = Object.keys(spotData)[0];
+  if (!firstId || !spotData[firstId] || !spotData[firstId].daily) {
+    return [];
+  }
+
+  var dailyData = spotData[firstId].daily;
+  for (var i = 0; i < dailyData.length; i++) {
+    var dateStr = dailyData[i].date;
+    var dayTemp = dailyData[i].sea_temp_avg_c || 0;
+
+    var summaries = evaluateAll(spotData, dateStr, dayTemp, { startHour: 4, endHour: 20 });
+    var best = summaries.length > 0 ? summaries[0] : null;
+    var scoreVal = best ? best.bestScore : 0;
+    var stars = best ? best.stars : 1;
+
+    dayScores.push({
+      date: dateStr,
+      weekday: weekdays[new Date(dateStr).getDay()],
+      dateLabel: dateStr.slice(5),
+      score: scoreVal,
+      scoreLabel: scoreVal.toFixed(0) + '分',
+      waveH: (dailyData[i].wave_height_avg_m || 0).toFixed(1),
+      period: (dailyData[i].swell_period_avg_s || 0).toFixed(1),
+      stars: stars,
+      starLabel: best ? best.starLabel : '不推荐',
+      bestSpot: best ? best.name : '--',
+    });
+  }
+
+  var goodDays = dayScores.filter(function (d) { return d.score >= 80; });
+  goodDays.sort(function (a, b) { return b.score - a.score; });
+  return goodDays;
+}
+
+/**
+ * 生成今日冲浪建议（按星级分组）
+ * @returns {Object} { hasRec: boolean, groups: [{starLabel, stars, starLevel, names}] }
+ * - 有推荐（≥3★）：groups 为按星级合并的浪点列表
+ * - 无推荐（<3★）：hasRec=false, groups=[]
+ */
+function buildAdvice(summaries) {
+  if (summaries.length === 0) return { hasRec: false, groups: [] };
 
   var best = summaries[0];
   if (best.stars < 3) {
-    var reasons = [];
-    if (todaySwell < 6) reasons.push('涌浪周期过低（' + todaySwell.toFixed(1) + 's）');
-    if (todayWaveH < 0.3) reasons.push('浪高偏低（' + todayWaveH.toFixed(1) + 'm）');
-    else if (todayWaveH > 2.8) reasons.push('浪高偏大（' + todayWaveH.toFixed(1) + 'm）');
-    if (todayWindSpeed != null && todayWindSpeed > 25) reasons.push('风力偏大（' + todayWindSpeed.toFixed(0) + 'km/h）');
-    if (reasons.length === 0) reasons.push('浪向与各浪点适配方向不匹配');
-    return '今日不推荐：' + reasons.join('；') + '。建议改日再来。';
+    return { hasRec: false, groups: [] };
   }
 
-  var parts = [];
-  var great = summaries.filter(function (s) { return s.stars === 5; });
-  var good = summaries.filter(function (s) { return s.stars === 4; });
+  var recs = summaries.filter(function (s) { return s.stars >= 3; });
 
-  if (great.length > 0) {
-    var gNames = great.slice(0, 3).map(function (s) { return s.name; });
-    parts.push('高推荐浪点（5★）：' + gNames.join('、'));
-  }
-  if (good.length > 0 && great.length < 2) {
-    var goNames = good.slice(0, 2).map(function (s) { return s.name; });
-    parts.push('推荐浪点（4★）：' + goNames.join('、'));
-  }
-
-  if (todaySwell >= 10) parts.push('涌浪周期优秀（' + todaySwell.toFixed(1) + 's）');
-  else if (todaySwell >= 7) parts.push('涌浪周期良好（' + todaySwell.toFixed(1) + 's）');
-
-  if (todayWindSpeed != null) {
-    var bestSpot = great.length > 0 ? great[0] : good.length > 0 ? good[0] : best;
-    var windRules = SPOT_SCORING[bestSpot.spotId] ? SPOT_SCORING[bestSpot.spotId].windRules : null;
-    if (windRules) {
-      var wDir = classifyDir(todayWindDir);
-      var isOff = windRules.offshore.some(function (d) { return classifyDir(d) === wDir; });
-      if (isOff && todayWindSpeed <= 15) {
-        parts.push('离岸风（' + todayWindDir + ' ' + todayWindSpeed.toFixed(0) + 'km/h），浪面干净');
-      } else if (todayWindSpeed > 25) {
-        parts.push('注意：风力较大（' + todayWindSpeed.toFixed(0) + 'km/h），浪面可能杂乱');
-      } else if (!isOff && todayWindSpeed > 15) {
-        parts.push('迎岸风（' + todayWindDir + ' ' + todayWindSpeed.toFixed(0) + 'km/h），浪面可能受影响');
-      }
+  /* 按星级分组，保持评分降序 */
+  var groupMap = {};
+  var order = [];
+  for (var i = 0; i < recs.length; i++) {
+    var s = recs[i];
+    var key = s.stars;
+    if (!groupMap[key]) {
+      groupMap[key] = { stars: s.stars, starLabel: s.starLabel, starLevel: s.starLevel, names: [], namesArr: [] };
+      order.push(key);
     }
+    groupMap[key].names.push(s.name);
+    groupMap[key].namesArr.push(s.name);
   }
 
-  if (todayTemp < 16) parts.push('注意：水温偏低（' + todayTemp.toFixed(0) + '°C），需配备湿衣');
-  var evals = best.scores || [];
-  if (evals.length > 0) {
-    var bestHour = evals[0];
-    if (bestHour && bestHour.waveH > 2.0) parts.push('提示：浪高偏大，新手请量力而行');
-  }
+  var groups = order.sort(function (a, b) { return b - a; }).map(function (k) {
+    var g = groupMap[k];
+    g.names = g.names.join('、');
+    return g;
+  });
 
-  return parts.join('。') + '。';
+  return { hasRec: true, groups: groups };
 }
 
 module.exports = {
@@ -589,4 +626,5 @@ module.exports = {
   STAR_LABELS: STAR_LABELS,
   mergeTimeRanges: mergeTimeRanges,
   buildAdvice: buildAdvice,
+  buildWeekRecommendations: buildWeekRecommendations,
 };

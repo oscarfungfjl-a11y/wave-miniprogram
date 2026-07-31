@@ -81,7 +81,7 @@ function buildCalendarMatrix(year, month) {
 Page({
   data: {
     loading: true, errorMsg: '',
-    todayAdvice: '',
+    todayAdvice: { hasRec: false, groups: [] },
     weekRecommendations: [],
     todayWaveH: '', todaySwell: '', todayTemp: '',
     topSpots: [], lastUpdate: '',
@@ -198,7 +198,7 @@ Page({
     }
     var dayTemp = targetDaily.sea_temp_avg_c || 0;
     var summaries = this.evaluateAllSpots(spotData, targetDate, dayTemp);
-    var topSpots = summaries.slice(0, 5).map(function (r) {
+    var topSpots = summaries.map(function (r) {
       var sd = spotData[r.spotId];
       var targetHourly = sd ? sd.hourly.filter(function (h) { return h.time.slice(0, 10) === targetDate; }) : [];
       var ranges = this.calcSpotRanges(targetHourly);
@@ -260,7 +260,7 @@ Page({
       var todayWindDir = refDaily.wind_direction_cn || null;
 
       var todaySummaries = that.evaluateAllSpots(spotData, todayDate, todayTemp);
-      var todayAdvice = recommender.buildAdvice(todaySummaries, todayWaveH, todaySwell, todayTemp, todayWindSpeed, todayWindDir);
+      var todayAdvice = recommender.buildAdvice(todaySummaries);
 
       var weekRecs = that.buildWeekRecommendations(spotData);
 
@@ -281,13 +281,20 @@ Page({
   },
 
   /* ── 对各浪点分别用自己的数据评分并汇总 ── */
-  evaluateAllSpots: function (spotData, targetDate, dayTemp) {
+  evaluateAllSpots: function (spotData, targetDate, dayTemp, options) {
+    var startHour = options && options.startHour != null ? options.startHour : 0;
+    var endHour = options && options.endHour != null ? options.endHour : 23;
+
     var allSummaries = [];
     var spotIds = Object.keys(spotData);
     for (var i = 0; i < spotIds.length; i++) {
       var sid = spotIds[i];
       var sd = spotData[sid];
-      var targetHourly = sd.hourly.filter(function (h) { return h.time.slice(0, 10) === targetDate; });
+      var targetHourly = sd.hourly.filter(function (h) {
+        if (h.time.slice(0, 10) !== targetDate) return false;
+        var hour = parseInt(h.time.slice(11, 13));
+        return hour >= startHour && hour <= endHour;
+      });
 
       /* 计算该浪点当日潮汐统计 */
       var seaLevels = [];
@@ -345,7 +352,7 @@ Page({
 
     var summaries = that.evaluateAllSpots(spotData, targetDate, dayTemp);
 
-    var topSpots = summaries.slice(0, 5).map(function (r) {
+    var topSpots = summaries.map(function (r) {
       /* 各浪点用自己的小时数据计算范围 */
       var sd = spotData[r.spotId];
       var targetHourly = sd ? sd.hourly.filter(function (h) { return h.time.slice(0, 10) === targetDate; }) : [];
@@ -382,7 +389,7 @@ Page({
       var dateStr = dailyData[i].date;
       var dayTemp = dailyData[i].sea_temp_avg_c || 0;
 
-      var summaries = this.evaluateAllSpots(spotData, dateStr, dayTemp);
+      var summaries = this.evaluateAllSpots(spotData, dateStr, dayTemp, { startHour: 4, endHour: 20 });
       var best = summaries.length > 0 ? summaries[0] : null;
       var scoreVal = best ? best.bestScore : 0;
       var stars = best ? best.stars : 1;
@@ -401,8 +408,10 @@ Page({
       });
     }
 
-    dayScores.sort(function (a, b) { return b.score - a.score; });
-    return dayScores.slice(0, 3);
+    /* 80分以上作为最佳日期推荐，按评分降序排列 */
+    var goodDays = dayScores.filter(function (d) { return d.score >= 80; });
+    goodDays.sort(function (a, b) { return b.score - a.score; });
+    return goodDays;
   },
 
   onRetryLoad: function () { this.loadData(this.data.selectedDate); },
