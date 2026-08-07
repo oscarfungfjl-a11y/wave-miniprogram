@@ -65,7 +65,16 @@ function linearScore(value, ranges) {
     }
   }
   
-  return ranges[ranges.length - 1][1];
+  var asc = ranges[0][0] < ranges[ranges.length - 1][0];
+  if (asc) {
+    return value > ranges[ranges.length - 1][0]
+      ? ranges[ranges.length - 1][1]
+      : ranges[0][1];
+  } else {
+    return value > ranges[0][0]
+      ? ranges[0][1]
+      : ranges[ranges.length - 1][1];
+  }
 }
 
 /**

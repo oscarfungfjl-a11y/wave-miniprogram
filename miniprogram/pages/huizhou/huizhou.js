@@ -86,6 +86,7 @@ Page({
     todayWaveH: '', todaySwell: '', todayTemp: '',
     topSpots: [], lastUpdate: '',
     dateChips: [], selectedDate: '', dateLabel: '', pickerEnd: '',
+    activeSource: 'chip',
     showCalendar: false,
     calYear: 0, calMonth: 0,
     calMinDate: '', calMaxDate: '',
@@ -126,7 +127,7 @@ Page({
     if (!dateStr) return;
     var chips = this.data.dateChips;
     for (var i = 0; i < chips.length; i++) chips[i].active = false;
-    this.setData({ dateChips: chips, selectedDate: dateStr, dateLabel: dateStr });
+    this.setData({ dateChips: chips, selectedDate: dateStr, dateLabel: dateStr, activeSource: 'week' });
     this.switchDate(dateStr);
   },
 
@@ -136,7 +137,7 @@ Page({
     var chips = this.data.dateChips;
     for (var i = 0; i < chips.length; i++) chips[i].active = (i === index);
     var sel = chips[index];
-    this.setData({ dateChips: chips, selectedDate: sel.date, dateLabel: sel.label });
+    this.setData({ dateChips: chips, selectedDate: sel.date, dateLabel: sel.label, activeSource: 'chip' });
     this.switchDate(sel.date);
   },
 
@@ -171,7 +172,7 @@ Page({
     for (var i = 0; i < chips.length; i++) chips[i].active = false;
     this.setData({
       selectedDate: dateStr, dateLabel: dateStr,
-      dateChips: chips, showCalendar: false,
+      dateChips: chips, showCalendar: false, activeSource: 'calendar',
     });
     this.switchDate(dateStr);
   },
@@ -197,7 +198,7 @@ Page({
       return;
     }
     var dayTemp = targetDaily.sea_temp_avg_c || 0;
-    var summaries = this.evaluateAllSpots(spotData, targetDate, dayTemp);
+    var summaries = this.evaluateAllSpots(spotData, targetDate, dayTemp, { startHour: 4, endHour: 20 });
     var topSpots = summaries.map(function (r) {
       var sd = spotData[r.spotId];
       var targetHourly = sd ? sd.hourly.filter(function (h) { return h.time.slice(0, 10) === targetDate; }) : [];
@@ -259,7 +260,7 @@ Page({
       var todayWindSpeed = refDaily.wind_speed_avg_kmh || null;
       var todayWindDir = refDaily.wind_direction_cn || null;
 
-      var todaySummaries = that.evaluateAllSpots(spotData, todayDate, todayTemp);
+      var todaySummaries = that.evaluateAllSpots(spotData, todayDate, todayTemp, { startHour: 4, endHour: 20 });
       var todayAdvice = recommender.buildAdvice(todaySummaries);
 
       var weekRecs = that.buildWeekRecommendations(spotData);
@@ -350,7 +351,7 @@ Page({
     var daySwell = targetDaily.swell_period_avg_s || 0;
     var dayTemp = targetDaily.sea_temp_avg_c || 0;
 
-    var summaries = that.evaluateAllSpots(spotData, targetDate, dayTemp);
+    var summaries = that.evaluateAllSpots(spotData, targetDate, dayTemp, { startHour: 4, endHour: 20 });
 
     var topSpots = summaries.map(function (r) {
       /* 各浪点用自己的小时数据计算范围 */
@@ -392,26 +393,22 @@ Page({
       var summaries = this.evaluateAllSpots(spotData, dateStr, dayTemp, { startHour: 4, endHour: 20 });
       var best = summaries.length > 0 ? summaries[0] : null;
       var scoreVal = best ? best.bestScore : 0;
-      var stars = best ? best.stars : 1;
 
       dayScores.push({
         date: dateStr,
         weekday: weekdays[new Date(dateStr).getDay()],
         dateLabel: dateStr.slice(5),
         score: scoreVal,
-        scoreLabel: scoreVal.toFixed(0) + '分',
-        waveH: (dailyData[i].wave_height_avg_m || 0).toFixed(1),
-        period: (dailyData[i].swell_period_avg_s || 0).toFixed(1),
-        stars: stars,
+        stars: best ? best.stars : 1,
         starLabel: best ? best.starLabel : '不推荐',
+        starLevel: best ? best.starLevel : '1',
         bestSpot: best ? best.name : '--',
+        isRecommended: scoreVal >= 80,
       });
     }
 
-    /* 80分以上作为最佳日期推荐，按评分降序排列 */
-    var goodDays = dayScores.filter(function (d) { return d.score >= 80; });
-    goodDays.sort(function (a, b) { return b.score - a.score; });
-    return goodDays;
+    /* 返回全部7天，推荐日期标记 isRecommended */
+    return dayScores;
   },
 
   onRetryLoad: function () { this.loadData(this.data.selectedDate); },

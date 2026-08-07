@@ -41,16 +41,18 @@
       <!-- 未来7天冲浪建议 -->
       <view class="advice-section">
         <text class="advice-section-title">未来7天最佳日期</text>
-        <block wx:if="{{weekRecommendations.length > 0}}">
-          <view class="week-recs">
-            <view class="week-rec-item" wx:for="{{weekRecommendations}}" wx:key="date" bindtap="onWeekRecTap" data-date="{{item.date}}">
-              <text class="week-rec-weekday">{{item.weekday}}</text>
-              <text class="week-rec-date">{{item.dateLabel}}</text>
-              <text class="week-rec-score">{{item.scoreLabel}}</text>
-            </view>
+        <view class="week-chips">
+          <view
+            class="week-chip {{item.isRecommended ? 'week-chip-rec star-bg-' + item.starLevel : ''}} {{item.date === selectedDate && activeSource === 'week' ? 'week-chip-sel' : ''}}"
+            wx:for="{{weekRecommendations}}"
+            wx:key="date"
+            bindtap="onWeekRecTap"
+            data-date="{{item.date}}"
+          >
+            <text class="week-chip-weekday">{{item.weekday}}</text>
+            <text class="week-chip-date">{{item.dateLabel}}</text>
           </view>
-        </block>
-        <text wx:else class="text-sm advice-content">无推荐日期（未来7天评分均未达到80分）</text>
+        </view>
       </view>
     </view>
 
@@ -84,7 +86,7 @@
         <view class="cal-grid">
           <view class="cal-row" wx:for="{{calMatrix}}" wx:key="index">
             <view
-              class="cal-day {{cell ? '' : 'cal-empty'}} {{cell && cell.date === selectedDate ? 'cal-sel' : ''}} {{cell && cell.date < calMinDate ? 'cal-disabled' : ''}} {{cell && cell.date > calMaxDate ? 'cal-disabled' : ''}} {{cell && cell.isToday ? 'cal-today' : ''}}"
+              class="cal-day {{cell ? '' : 'cal-empty'}} {{cell && cell.date === selectedDate && activeSource === 'calendar' ? 'cal-sel' : ''}} {{cell && cell.date < calMinDate ? 'cal-disabled' : ''}} {{cell && cell.date > calMaxDate ? 'cal-disabled' : ''}} {{cell && cell.isToday ? 'cal-today' : ''}}"
               wx:for="{{item}}" wx:for-item="cell" wx:key="index"
               data-date="{{cell ? cell.date : ''}}"
               bindtap="onTapCalDay"
